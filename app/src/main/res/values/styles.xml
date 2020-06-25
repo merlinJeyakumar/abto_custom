@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:actionModeBackground">?attr/colorPrimary</item>
+        //remember this is the colour of your parent activity's toolbar
+        <item name="android:actionModeStyle">@style/ActionMode</item>
+    </style>
+
+    <style name="ActionMode">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:height">?attr/actionBarSize</item>
+    </style>
+
+</resources>

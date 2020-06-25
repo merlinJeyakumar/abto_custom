@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Abto Custom</string>
+    <string name="db_name">database_main</string>
+    <string name="internet_connection_is_not_valid">internet connection is not valid</string>
+</resources>

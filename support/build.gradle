@@ -1,0 +1,61 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion versions.compile_sdk
+
+    defaultConfig {
+        //applicationId "com.support"
+        minSdkVersion versions.min_sdk
+        targetSdkVersion versions.target_sdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+    dataBinding {
+        enabled = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+
+}
+
+androidExtensions {
+    experimental = true
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation commonDependencies.values()
+    api roomDependencies.values()
+    api group: 'com.fatboyindustrial.gson-jodatime-serialisers', name: 'gson-jodatime-serialisers', version: '1.8.0'
+    api basicLibraries.values()
+    api rxJavaDependencies.values()
+    api networkDependencies.values()
+    api jodaTimeDependencies.values()
+    api glideDependencies.values()
+    api libraries.anko_jetbrains
+
+    kapt kaptProcessorDep.room_compiler
+
+    testImplementation testDependencies.values()
+    androidTestImplementation androidTestingDependencies.values()
+
+}

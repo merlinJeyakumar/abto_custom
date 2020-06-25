@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mood_happy">#93af0e</color>
+    <color name="mood_sad">#6c6c6c</color>
+    <color name="mood_angry">#ff002a</color>
+    <color name="mood_neutral">#000000</color>
+    <color name="mood_disgust">#925134</color>
+    <color name="mood_fear">#5D23A4</color>
+    <color name="mood_surprise">#1283b7</color>
+</resources>

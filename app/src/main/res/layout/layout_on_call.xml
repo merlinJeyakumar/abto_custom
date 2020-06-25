@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.merlin.abto.ui.activity.call.CallViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/call_gradient"
+        android:fillViewport="true"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/call_gradient"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <SurfaceView
+                    android:id="@+id/svRemoteView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+
+                <SurfaceView
+                    android:id="@+id/svLocalVideo"
+                    android:layout_width="90dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="10dp"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivUser"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                app:layout_constraintBottom_toTopOf="@+id/onCallOptionMenu"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.45999998"
+                app:srcCompat="@drawable/user_icon"
+                app:tint="@android:color/white" />
+
+            <LinearLayout
+                android:id="@+id/onCallOptionMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/frameLayout"
+                app:layout_constraintVertical_bias="0.65999997">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/ivSpeaker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/circle_drawable"
+                        android:onClick="@{_->viewmodel.setSpeakerMode()}"
+                        android:padding="@dimen/_10sdp"
+                        android:src="@{viewmodel.callSpeakerDrawable}"
+                        app:srcCompat="@drawable/speaker_off" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvSpeakerMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:hint="Speaker off"
+                        android:padding="@dimen/_5sdp"
+                        android:text="@{viewmodel.speakerModeText}"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/ivMicMute"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/circle_drawable"
+                        android:onClick="@{_->viewmodel.setMicMute()}"
+                        android:padding="@dimen/_10sdp"
+                        android:src="@{viewmodel.callMicDrawable}"
+                        app:srcCompat="@drawable/mic_on" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvMicMute"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:hint="Mic on"
+                        android:padding="@dimen/_5sdp"
+                        android:text="@{viewmodel.micMuteText}"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/ivRecord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/circle_drawable"
+                        android:onClick="@{_->viewmodel.setRecording()}"
+                        android:padding="@dimen/_10sdp"
+                        android:src="@{viewmodel.recordingDrawable}"
+                        app:srcCompat="@drawable/ic_record_off" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvRecord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:hint="Record"
+                        android:padding="@dimen/_5sdp"
+                        android:text="@{viewmodel.recordingText}"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_10sdp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/frameLayout"
+                app:layout_constraintVertical_bias="0.95">
+
+                <ImageButton
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:background="@{viewmodel.endButtonBackground}"
+                    android:onClick="@{_->viewmodel.doHangup()}"
+                    android:padding="@dimen/_20sdp"
+                    android:src="@{viewmodel.endButtonDrawable}"
+                    app:srcCompat="@drawable/ic_baseline_close_35" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:hint="close"
+                    android:padding="@dimen/_5sdp"
+                    android:gravity="center"
+                    android:text="@{viewmodel.endButtonText}"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white" />
+
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCallState"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:hint=".."
+                android:text="@{viewmodel.connectionStatus}"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvCallerName" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCallerName"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="Merlin Jeyakumar"
+                android:text="@{viewmodel.onCallDisplayName}"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:textSize="25dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tvCallState"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivUser"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

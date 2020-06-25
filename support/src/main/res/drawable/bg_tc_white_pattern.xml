@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+
+        <shape>
+
+            <solid android:color="@android:color/transparent" />
+
+        </shape>
+
+    </item>
+
+    <item>
+
+        <shape>
+
+            <corners
+                android:topLeftRadius="@dimen/_15sdp"
+                android:topRightRadius="@dimen/_15sdp" />
+            <solid android:color="@color/whiteLightChatTrans" />
+
+        </shape>
+    </item>
+
+    <item
+        android:drawable="@drawable/vd_chat_curved_bg">
+    </item>
+
+
+</layer-list>

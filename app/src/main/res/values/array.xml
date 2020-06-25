@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sip_array">
+        <item>9042886538@146.148.92.201;password</item>
+        <item>6383261211@146.148.92.201;password</item>
+        <item>test1@146.148.92.201;password</item>
+        <item>test2@146.148.92.201;password</item>
+        <item>6383261211@sip.antisip.com;password</item>
+        <item>9042286538@sip.antisip.com;password</item>
+        <item>jeyakumar01@sip.antisip.com;password</item>
+        <item>jeyakumar02@sip.antisip.com;password</item>
+    </string-array>
+</resources>

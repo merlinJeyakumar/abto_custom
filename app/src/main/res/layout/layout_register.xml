@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewmodel"
+            type="com.merlin.abto.ui.activity.register.RegisterViewModel" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_weight="0.50"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edSipId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="SIP ID"
+                android:padding="@dimen/_10sdp"
+                android:text="@{viewmodel.sipId}" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:padding="@dimen/_10sdp"
+                android:text="@{viewmodel.sipPassword}" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edDomain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Domain"
+                android:padding="@dimen/_10sdp"
+                android:text="@{viewmodel.sipDomain}" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->viewmodel.doRegister(edSipId.getText().toString(),edDomain.getText().toString(),edPassword.getText().toString())}"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Register" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>

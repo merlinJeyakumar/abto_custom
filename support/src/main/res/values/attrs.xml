@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="IndexFastScrollRecyclerView">
+        <attr name="setIndexTextSize" format="integer" />
+        <attr name="setIndexbarWidth" format="float" />
+        <attr name="setIndexbarMargin" format="float" />
+        <attr name="setPreviewPadding" format="integer" />
+        <attr name="setIndexBarCornerRadius" format="integer" />
+        <attr name="setIndexBarTransparentValue" format="float" />
+        <attr name="setIndexBarColor" format="string" />
+        <attr name="setIndexBarTextColor" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="MessageView">
+        <attr name="messageViewStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="ShapedImageView">
+        <attr name="shape_mode" format="enum">
+            <enum name="round_rect" value="1" />
+            <enum name="circle" value="2" />
+        </attr>
+        <attr name="round_radius" format="dimension" />
+
+        <attr name="stroke_width" format="dimension" />
+        <attr name="stroke_color" format="color|reference" />
+    </declare-styleable>
+
+
+    <declare-styleable name="AwesomeToggle">
+        <attr name="active_background_color" format="color" />
+        <attr name="inactive_background_color" format="color" />
+        <attr name="inner_toggle_color" format="color" />
+        <attr name="font_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="PinView">
+        <attr name="pinBackground" format="reference" />
+        <attr name="pinLength" format="integer" />
+        <attr name="pinWidth" format="dimension" />
+        <attr name="pinHeight" format="dimension" />
+        <attr name="splitWidth" format="dimension" />
+        <attr name="cursorVisible" format="boolean" />
+        <attr name="password" format="boolean" />
+        <attr name="forceKeyboard" format="boolean" />
+        <attr name="hint" format="string" />
+        <attr name="inputType" />
+    </declare-styleable>
+    <attr name="inputType" format="enum">
+        <enum name="text" value="0" />
+        <enum name="number" value="1" />
+    </attr>
+
+    <declare-styleable name="MaterialSpinner" tools:ignore="ResourceName">
+        <attr name="ms_arrow_tint" format="color" />
+        <attr name="ms_hide_arrow" format="boolean" />
+        <attr name="ms_background_color" format="color" />
+        <attr name="ms_text_color" format="color" />
+        <attr name="ms_dropdown_max_height" format="dimension" />
+        <attr name="ms_dropdown_height" format="dimension">
+            <enum name="fill_parent" value="-1" />
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="ms_background_selector" format="integer" />
+        <attr name="ms_hint" format="string" />
+        <attr name="ms_hint_color" format="color" />
+    </declare-styleable>
+    <declare-styleable name="MaterialEditText">
+        <attr name="met_baseColor" format="color" />
+        <attr name="met_primaryColor" format="color" />
+        <attr name="met_floatingLabel">
+            <enum name="none" value="0" />
+            <enum name="normal" value="1" />
+            <enum name="highlight" value="2" />
+        </attr>
+        <attr name="met_errorColor" format="color" />
+        <attr name="met_minCharacters" format="integer" />
+        <attr name="met_maxCharacters" format="integer" />
+        <attr name="met_singleLineEllipsis" format="boolean" />
+        <attr name="met_minBottomTextLines" format="integer" />
+        <attr name="met_helperText" format="string" />
+        <attr name="met_helperTextColor" format="color" />
+        <attr name="met_accentTypeface" format="string" />
+        <attr name="met_typeface" format="string" />
+        <attr name="met_floatingLabelText" format="string" />
+        <attr name="met_floatingLabelPadding" format="dimension" />
+        <attr name="met_hideUnderline" format="boolean" />
+        <attr name="met_underlineColor" format="color" />
+        <attr name="met_autoValidate" format="boolean" />
+        <attr name="met_iconLeft" format="reference" />
+        <attr name="met_iconRight" format="reference" />
+        <attr name="met_iconPadding" format="dimension" />
+        <attr name="met_clearButton" format="boolean" />
+        <attr name="met_floatingLabelTextSize" format="dimension" />
+        <attr name="met_floatingLabelTextColor" format="color" />
+        <attr name="met_bottomTextSize" format="dimension" />
+        <attr name="met_floatingLabelAlwaysShown" format="boolean" />
+        <attr name="met_helperTextAlwaysShown" format="boolean" />
+        <attr name="met_floatingLabelAnimating" format="boolean" />
+        <attr name="met_textColor" format="color" />
+        <attr name="met_textColorHint" format="color" />
+        <attr name="met_validateOnFocusLost" format="boolean" />
+        <attr name="met_checkCharactersCountAtBeginning" format="boolean" />
+        <attr name="met_setFontName" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="min" format="integer" />
+        <attr name="max" format="integer" />
+        <attr name="progress" format="integer" />
+        <attr name="progressbarColor" format="color" />
+        <attr name="progressBarThickness" format="dimension" />
+
+    </declare-styleable>
+
+
+    <declare-styleable name="RangeSeekBar">
+        <!--RangeSeekBar common attrs-->
+
+        <!--The maximum-->
+        <attr name="rsb_max" format="float"/>
+
+        <!--The minimum-->
+        <attr name="rsb_min" format="float"/>
+
+        <!--RangeSeekBar mode, single is normal seekBar, range is RangeSeekBar-->
+        <attr name="rsb_mode" format="enum">
+            <enum name="single" value="1"/>
+            <enum name="range" value="2"/>
+        </attr>
+
+        <!--RangeSeekBar gravity-->
+        <attr name="rsb_gravity" format="enum">
+            <enum name="top" value="0"/>
+            <enum name="bottom" value="1"/>
+            <enum name="center" value="2"/>
+        </attr>
+
+        <!--The min interval of the thumbs -->
+        <attr name="rsb_min_interval" format="float"/>
+
+        <!-- 0 for the normal mode, greater than 1 to switch to scale mode-->
+        <attr name="rsb_tick_mark_number" format="integer"/>
+
+        <!--Scale mode
+        Number according to the scale of the actual proportion of the distribution of the location (markTextArray must be a number)
+        Other bisects the current layout (markTextArray can be any character)
+        -->
+        <attr name="rsb_tick_mark_mode" format="enum">
+            <enum name="number" value="0"/>
+            <enum name="other" value="1"/>
+        </attr>
+
+        <!--The tick mark text gravity -->
+        <attr name="rsb_tick_mark_gravity" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+
+        <!--The tick mark text layout gravity -->
+        <attr name="rsb_tick_mark_layout_gravity" format="enum">
+            <enum name="top" value="0"/>
+            <enum name="bottom" value="1"/>
+        </attr>
+
+        <!--The tick mark text array -->
+        <attr name="rsb_tick_mark_text_array" format="reference"/>
+
+        <!--The tick mark text margin bottom to progress -->
+        <attr name="rsb_tick_mark_text_margin" format="dimension" />
+
+        <attr name="rsb_tick_mark_text_size" format="dimension" />
+
+        <attr name="rsb_tick_mark_text_color" format="color" />
+
+        <!--it just work in range && number mode now-->
+        <attr name="rsb_tick_mark_in_range_text_color" format="color" />
+
+        <attr name="rsb_progress_height" format="dimension"/>
+
+        <attr name="rsb_progress_radius" format="dimension"/>
+
+        <!--the color of progress bar when in progress-->
+        <attr name="rsb_progress_color" format="color"/>
+        <!--the default color of the progress bar-->
+        <attr name="rsb_progress_default_color" format="color"/>
+
+        <attr name="rsb_progress_drawable" format="reference"/>
+
+        <attr name="rsb_progress_drawable_default" format="reference"/>
+
+        <!--SeekBar attrs-->
+        <attr name="rsb_indicator_show_mode" format="enum">
+            <enum name="showWhenTouch" value="0"/>
+            <enum name="alwaysHide" value="1"/>
+            <enum name="alwaysShowAfterTouch" value="2"/>
+            <enum name="alwaysShow" value="3"/>
+        </attr>
+        <attr name="rsb_indicator_height" format="dimension" >
+            <enum name="wrap_content" value="-1" />
+        </attr>
+        <attr name="rsb_indicator_width" format="dimension" >
+            <enum name="wrap_content" value="-1" />
+        </attr>
+        <!--indicator margin bottom to progress bar-->
+        <attr name="rsb_indicator_margin" format="dimension" />
+        <attr name="rsb_indicator_text_size" format="dimension" />
+        <attr name="rsb_indicator_text_color" format="color" />
+        <!--indicator arrow size, it just work when you not use rsb_indicator_drawable -->
+        <attr name="rsb_indicator_arrow_size" format="dimension" />
+        <!-- must use 9 path ！！！-->
+        <attr name="rsb_indicator_drawable" format="reference"/>
+        <attr name="rsb_indicator_background_color" format="color" />
+        <attr name="rsb_indicator_padding_left" format="dimension" />
+        <attr name="rsb_indicator_padding_right" format="dimension" />
+        <attr name="rsb_indicator_padding_top" format="dimension" />
+        <attr name="rsb_indicator_padding_bottom" format="dimension" />
+        <attr name="rsb_indicator_radius" format="dimension" />
+        <attr name="rsb_thumb_drawable" format="reference"/>
+        <!--the thumb inactivated is when you don't touch the thumb button-->
+        <attr name="rsb_thumb_inactivated_drawable" format="reference"/>
+        <attr name="rsb_thumb_width" format="dimension"/>
+        <attr name="rsb_thumb_height" format="dimension"/>
+        <attr name="rsb_thumb_scale_ratio" format="float"/>
+
+        <!--steps SeekBar-->
+        <attr name="rsb_steps" format="integer"/>
+        <attr name="rsb_step_color" format="color"/>
+        <attr name="rsb_step_width" format="dimension"/>
+        <attr name="rsb_step_height" format="dimension"/>
+        <attr name="rsb_step_radius" format="dimension"/>
+        <attr name="rsb_step_auto_bonding" format="boolean"/>
+        <attr name="rsb_step_drawable" format="reference"/>
+
+    </declare-styleable>
+
+    <declare-styleable name="VerticalRangeSeekBar" >
+        <!--the vertical RangeSeekBar draw orientation-->
+        <attr name="rsb_orientation" format="enum">
+            <enum name="left" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+        <attr name="rsb_tick_mark_orientation" format="enum">
+            <enum name="vertical" value="1"/>
+            <enum name="horizontal" value="2"/>
+        </attr>
+        <attr name="rsb_indicator_text_orientation" format="enum">
+            <enum name="vertical" value="1"/>
+            <enum name="horizontal" value="2"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BadgedTabLayout">
+        <attr name="badgeTextColor" format="color" />
+        <attr name="badgeTextSize" format="dimension" />
+        <attr name="badgeSelectedTextColor" format="color" />
+        <attr name="badgeBackgroundColor" format="color" />
+        <attr name="badgeSelectedBackgroundColor" format="color" />
+        <attr name="tabTextSize" format="dimension" />
+    </declare-styleable>
+
+</resources>

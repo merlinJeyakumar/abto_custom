@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.activity.main.MainActivity">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="com.merlin.abto.ui.activity.main.MainViewModel" />
+    </data>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:hint="merlinJeyakumar@146.142.98.65"
+                        android:padding="@dimen/_5sdp"
+                        android:text="@{viewmodel.registeredIdLiveData}" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.8"
+                        android:hint="[ST: TCP - AT: TCP]"
+                        android:padding="@dimen/_5sdp"
+                        android:text="@{viewmodel.sipTransportTypes}"
+                        android:tooltipText="Signaling transport\nAlive Transport" />
+
+                </LinearLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="User Identity or Sip Address">
+
+                        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            android:id="@+id/edSipId"
+                            style="@style/Widget.MaterialComponents.AutoCompleteTextView.FilledBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:completionThreshold="1"
+                            android:text="@{viewmodel.sipText}"
+                            android:drawableRight="@drawable/mic_on"
+                            android:drawableTint="@android:color/transparent"
+                            android:imeOptions="actionDone"
+                            android:inputType="textAutoComplete|textWebEmailAddress|textWebEditText" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/ibClearText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end|center"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:background="@android:color/transparent"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:onClick="@{_->edSipId.getText().clear()}"
+                        android:src="@drawable/ic_baseline_backspace_24" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:layout_weight="1"
+                    android:onClick="@{()->viewmodel.doCall(edSipId.getText().toString(),true)}"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                    android:tint="@color/black_smoke"
+                    app:icon="@drawable/ic_notif_pick_up_video"
+                    app:iconGravity="textEnd" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:layout_weight="1"
+                    android:onClick="@{()->viewmodel.doCall(edSipId.getText().toString(),false)}"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                    android:tint="@color/black_smoke"
+                    app:icon="@drawable/ic_notif_pick_up_audio"
+                    app:iconGravity="textEnd" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Send message">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="textAutoComplete" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:layout_weight="1"
+                    android:onClick="@{()->viewmodel.doSendMessage(edSipId.getText().toString(),edMessage.getText().toString())}"
+                    android:text="Send Message"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                    android:tint="@color/black_smoke"
+                    app:icon="@drawable/ic_twotone_message_24"
+                    app:iconGravity="textStart" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Connectivity Status" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:hint="Not Connected"
+                    android:text="@{viewmodel.sipConnectStatus}" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</layout>

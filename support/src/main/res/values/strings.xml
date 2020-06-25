@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">support</string>
+
+    <string name="msg_no_internet_available">Please check your internet connection!</string>
+    <string name="msg_please_try_again">Please try again</string>
+
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="label_ok">OK</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_continue">Continue</string>
+
+    <string name="msg_no_data_available">No Data Available</string>
+
+    <string name="loading">Loading</string>
+    <string name="loading_success">Loaded Successfully</string>
+    <string name="heart_no_fill_path">M 433.601 67.001 C 408.901 42.301 376.201 28.801 341.301 28.801 C 306.401 28.801 273.601 42.401 248.901 67.101 L 236.001 80.001 L 222.901 66.901 C 198.201 42.201 165.301 28.501 130.401 28.501 C 95.601 28.501 62.801 42.101 38.201 66.701 C 13.501 91.401 -0.099 124.201 0.001 159.101 C 0.001 194.001 13.701 226.701 38.401 251.401 L 226.201 439.201 C 228.801 441.801 232.301 443.201 235.701 443.201 C 239.101 443.201 242.601 441.901 245.201 439.301 L 433.401 251.801 C 458.101 227.101 471.701 194.301 471.701 159.401 C 471.801 124.501 458.301 91.701 433.601 67.001 Z M 414.401 232.701 L 235.701 410.701 L 57.401 232.401 C 37.801 212.801 27.001 186.801 27.001 159.101 C 27.001 131.401 37.701 105.401 57.301 85.901 C 76.801 66.401 102.801 55.601 130.401 55.601 C 158.101 55.601 184.201 66.401 203.801 86.001 L 226.401 108.601 C 231.701 113.901 240.201 113.901 245.501 108.601 L 267.901 86.201 C 287.501 66.601 313.601 55.801 341.201 55.801 C 368.801 55.801 394.801 66.601 414.401 86.101 C 434.001 105.701 444.701 131.701 444.701 159.401 C 444.801 187.101 434.001 213.101 414.401 232.701 Z</string>
+</resources>
