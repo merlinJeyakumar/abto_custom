@@ -169,7 +169,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:hint="Not Connected"
-                    android:text="@{viewmodel.sipConnectStatus}" />
+                    android:text="@{viewmodel.sipConnectionStatus}" />
 
             </LinearLayout>
         </LinearLayout>

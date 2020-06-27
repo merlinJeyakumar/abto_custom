@@ -35,9 +35,9 @@ class MainViewModel(
     val sipTransportTypes: MutableLiveData<String>
         get() = _sipTransportTypes
 
-    private val _sipConnectStatus = MutableLiveData<String>()
-    val sipConnectStatus: MutableLiveData<String>
-        get() = _sipConnectStatus
+    private val _sipConnectionStatus = MutableLiveData<String>()
+    val sipConnectionStatus: MutableLiveData<String>
+        get() = _sipConnectionStatus
 
     private val _connectCall = MutableLiveData<Pair<String, Boolean>>()
     val connectCall: LiveData<Pair<String, Boolean>>
@@ -51,6 +51,10 @@ class MainViewModel(
     val sipText: LiveData<String>
         get() = _sipText
 
+    private val _connectionStatus = MutableLiveData<Boolean>()
+    val connectionStatus: LiveData<Boolean>
+        get() = _connectionStatus
+
     override fun subscribe() {
         initPermission()
         setupObserver()
@@ -58,7 +62,7 @@ class MainViewModel(
         initUi()
     }
 
-    private fun initPermission() {
+    fun initPermission() {
         addRxCall(
             RealRxPermission.getInstance(AppController.instance)
                 .requestEach(
@@ -71,7 +75,7 @@ class MainViewModel(
                     if (it) {
                         abtoHelper.initializeAbto()
                     } else {
-                        sipConnectStatus.value = "Not Connected, Phone Permission required"
+                        sipConnectionStatus.value = "Not Connected, Phone Permission required"
                         toastMessage.value = "Phone Permission required"
                     }
                 }, {
@@ -100,7 +104,7 @@ class MainViewModel(
 
         _sipText.postValue(appSettingsRepository.getDraftText())
 
-        _sipConnectStatus.postValue(if (abtoHelper.isAbtoRegistered()) "Registered" else "Registering")
+        _sipConnectionStatus.postValue(if (abtoHelper.isAbtoRegistered()) "Registered" else "Registering")
     }
 
     private fun setupObserver() {
@@ -111,39 +115,51 @@ class MainViewModel(
                 .subscribe {
                     when (it.abtoState) {
                         AbtoState.INITIALIZING -> {
-                            _sipConnectStatus.value = "initializing"
+                            _connectionStatus.postValue(true)
+                            _sipConnectionStatus.value = "initializing"
                             Log.e(TAG, "setupObserver initializing")
                         }
                         AbtoState.INITIALIZED -> {
-                            _sipConnectStatus.value = "initialized"
+                            _connectionStatus.postValue(true)
+                            _sipConnectionStatus.value = "initialized"
                             Log.e(TAG, "setupObserver initialized")
                         }
                         AbtoState.INITIALIZATION_FAILED -> {
+                            _connectionStatus.postValue(false)
                             showProgress.value = false
                             it.throwable?.printStackTrace()
-                            _sipConnectStatus.value =
+                            _sipConnectionStatus.value =
                                 "initializing failed ${it.throwable?.localizedMessage}"
                             Log.e(TAG, "setupObserver initializing failed")
                         }
                         AbtoState.REGISTERING -> {
-                            _sipConnectStatus.value = "Registering"
+                            _connectionStatus.postValue(true)
+                            _sipConnectionStatus.value = "Registering"
                             Log.e(TAG, "setupObserver Registering")
                         }
                         AbtoState.REGISTERED -> {
+                            _connectionStatus.postValue(true)
                             showProgress.value = false
-                            _sipConnectStatus.value = "Registered"
+                            _sipConnectionStatus.value = "Registered"
                             Log.e(TAG, "setupObserver Registered")
                         }
                         AbtoState.REGISTERING_FAILED -> {
+                            _connectionStatus.postValue(false)
                             showProgress.value = false
                             it.throwable?.printStackTrace()
-                            _sipConnectStatus.value =
+                            _sipConnectionStatus.value =
                                 "registering failed ${it.throwable?.localizedMessage}"
                         }
                         AbtoState.UNREGISTERED -> {
-                            _sipConnectStatus.value = "unregistered"
+                            _connectionStatus.postValue(false)
+                            _sipConnectionStatus.value = "unregistered"
                             _unregisterLiveData.postValue(Unit)
                             Log.e(TAG, "setupObserver UNREGISTERED")
+                        }
+                        AbtoState.DESTROYED -> {
+                            _connectionStatus.postValue(false)
+                            _sipConnectionStatus.value = "service destroyed"
+                            Log.e(TAG, "setupObserver Destroyed")
                         }
                     }
                 })

@@ -20,6 +20,7 @@ import java.io.File
 class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAbtoHandler {
     private val TAG: String = AbtoHelper::class.java.simpleName
     private var abtoPhone: AbtoPhone = instance.abtoPhone
+    private var isDestroyed: Boolean = false
 
     companion object {
         private var INSTANCE: AbtoHelper? = null
@@ -40,6 +41,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         sipDisplayName: String = appSettingsRepository.getCurrentUserSipModel().displayName,
         isForeground: Boolean = false
     ) {
+        isDestroyed = false
         abtoPhone.setInMessageListener { message, senderSipId, currentSipId ->
             Log.i(TAG, "setInMessageListener $message $senderSipId $currentSipId")
             RxBus.publish(AbtoRxEvents.MessageReceived(message, senderSipId, currentSipId))
@@ -147,7 +149,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         throwable = Exception(errorMessage)
                     )
                 )
-                if (!isForeground) {
+                if (!isForeground && !isDestroyed) {
                     initializeAbto()
                 }
             }
@@ -175,6 +177,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                 )
             )
         }
+
         abtoPhone.setOnCallHeldListener { callId, holdState ->
             val state: CallState = when (holdState) {
                 OnCallHeldListener.HoldState.LOCAL_HOLD -> {
@@ -434,5 +437,21 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
 
     fun getAbtoConfiguration(): AbtoPhoneCfg {
         return abtoPhone.config
+    }
+
+    override fun destroyAbtoService(): Completable {
+        return Completable.create {
+            abtoPhone.destroy()
+            abtoPhone.isActive
+            RxBus.publish(
+                AbtoRxEvents.AbtoConnectionChanged(
+                    abtoState = AbtoState.DESTROYED,
+                    errorCode = 0,
+                    message = "service destroyed",
+                    throwable = Exception("service destroyed")
+                )
+            )
+            isDestroyed = true
+        }
     }
 }

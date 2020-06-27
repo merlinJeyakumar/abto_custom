@@ -1,7 +1,7 @@
 package com.merlin.abto.ui.activity.configuration
 
 import android.Manifest
-import android.widget.ArrayAdapter
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.data.repositories.AppSettingsRepository
@@ -25,11 +25,10 @@ class ConfigurationViewModel(
 ) : MBaseViewModel(AppController.instance) {
 
     private val TAG: String = MainViewModel::class.java.simpleName
-    private lateinit var arrayAdapter: ArrayAdapter<String>
 
-    private val _sipConnectStatus = MutableLiveData<String>()
-    val sipConnectStatus: MutableLiveData<String>
-        get() = _sipConnectStatus
+    private val _sipConnectStatusText = MutableLiveData<String>()
+    val sipConnectStatusText: LiveData<String>
+        get() = _sipConnectStatusText
 
     private val _signallingTransport = MutableLiveData<String>()
     val signallingTransport: MutableLiveData<String>
@@ -59,6 +58,18 @@ class ConfigurationViewModel(
     val autoSendRtpAudio: MutableLiveData<Boolean>
         get() = _autoSendRtpAudio
 
+    private val _sipConnectionStatus = MutableLiveData<Boolean>()
+    val sipConnectionStatus: LiveData<Boolean>
+        get() = _sipConnectionStatus
+
+    private val _sipInitializeButton = MutableLiveData<String>()
+    val sipInitializeButton: LiveData<String>
+        get() = _sipInitializeButton
+
+    private val _unInitializeLabelVisibility = MutableLiveData<Int>()
+    val unInitializeLabelVisibility: LiveData<Int>
+        get() = _unInitializeLabelVisibility
+
     override fun subscribe() {
         initPermission()
         setupObserver()
@@ -78,7 +89,7 @@ class ConfigurationViewModel(
                     if (it) {
                         abtoHelper.initializeAbto()
                     } else {
-                        sipConnectStatus.value = "Not Connected, Phone Permission required"
+                        _sipConnectStatusText.value = "Not Connected, Phone Permission required"
                         toastMessage.value = "Phone Permission required"
                     }
                 }, {
@@ -95,44 +106,65 @@ class ConfigurationViewModel(
                 .subscribe {
                     when (it.abtoState) {
                         AbtoState.INITIALIZING -> {
-                            _sipConnectStatus.value = "initializing"
+                            _sipConnectStatusText.value = "initializing"
                             Log.e(TAG, "setupObserver initializing")
                         }
                         AbtoState.INITIALIZED -> {
-                            _sipConnectStatus.value = "initialized"
+                            _sipConnectStatusText.value = "initialized"
+                            onInitializeCreatedDestroyed(true)
                             Log.e(TAG, "setupObserver initialized")
                         }
                         AbtoState.INITIALIZATION_FAILED -> {
                             showProgress.value = false
                             it.throwable?.printStackTrace()
-                            _sipConnectStatus.value =
+                            _sipConnectStatusText.value =
                                 "initializing failed ${it.throwable?.localizedMessage}"
                             Log.e(TAG, "setupObserver initializing failed")
                         }
                         AbtoState.REGISTERING -> {
-                            _sipConnectStatus.value = "Registering"
+                            _sipConnectStatusText.value = "Registering"
                             Log.e(TAG, "setupObserver Registering")
                         }
                         AbtoState.REGISTERED -> {
                             showProgress.value = false
-                            _sipConnectStatus.value = "Registered"
+                            _sipConnectStatusText.value = "Registered"
                             Log.e(TAG, "setupObserver Registered")
+                            _sipInitializeButton.postValue("UnInitialize")
                         }
                         AbtoState.REGISTERING_FAILED -> {
                             showProgress.value = false
                             it.throwable?.printStackTrace()
-                            _sipConnectStatus.value =
+                            _sipConnectStatusText.value =
                                 "registering failed ${it.throwable?.localizedMessage}"
                         }
                         AbtoState.UNREGISTERED -> {
-                            _sipConnectStatus.value = "unregistered"
+                            _sipConnectStatusText.value = "unregistered"
                             Log.e(TAG, "setupObserver UNREGISTERED")
+                        }
+                        AbtoState.DESTROYED -> {
+                            onInitializeCreatedDestroyed(false)
+                            Log.e(TAG, "setupObserver Destroyed")
                         }
                     }
                 })
     }
 
+    private fun onInitializeCreatedDestroyed(isInitialized: Boolean) {
+        _sipConnectionStatus.postValue(isInitialized)
+        if (isInitialized) {
+            _sipInitializeButton.postValue("Save & Initialize")
+            _unInitializeLabelVisibility.postValue(View.VISIBLE)
+        } else {
+            _unInitializeLabelVisibility.postValue(View.GONE)
+            _sipConnectStatusText.value = "service destroyed"
+            _sipInitializeButton.postValue("Save & Initialize")
+        }
+    }
+
     private fun initUi() {
+        _sipConnectionStatus.postValue(abtoHelper.isAbtoRegistered())
+        _sipConnectStatusText.postValue(if (abtoHelper.isAbtoRegistered()) "Registered" else "Registering")
+        _sipInitializeButton.postValue(if (abtoHelper.isAbtoRegistered()) "UnInitialize" else "Save & Initialize")
         _signallingTransport.postValue(abtoHelper.getAbtoConfiguration().signalingTransport.name)
         _keepAliveTransportInterval.postValue(
             "${abtoHelper.getAbtoConfiguration()
@@ -181,5 +213,16 @@ class ConfigurationViewModel(
     fun setAutoSendRtpVideo(isEnabled: Boolean = false) {
         abtoHelper.getAbtoConfiguration().setEnableAutoSendRtpVideo(isEnabled)
         initUi()
+    }
+
+    fun destroyAbtoService() {
+        if (abtoHelper.isAbtoRegistered()) {
+            addRxCall(abtoHelper.destroyAbtoService().subscribe({}, {
+                toastMessage.postValue(it.localizedMessage)
+                it.printStackTrace()
+            }))
+        } else {
+            abtoHelper.initializeAbto(isForeground = true)
+        }
     }
 }

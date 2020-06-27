@@ -5,6 +5,8 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import com.merlin.abto.R
 import com.merlin.abto.databinding.LayoutConfigurationBinding
 import com.merlin.abto.extension.obtainViewModel
@@ -12,6 +14,7 @@ import com.support.baseApp.mvvm.MActionBarActivity
 import com.support.dialog.getInputDialog
 import com.support.dialog.getListDialog
 import io.reactivex.functions.Predicate
+import kotlinx.android.synthetic.main.layout_configuration.*
 import org.abtollc.sdk.AbtoPhoneCfg
 import org.jetbrains.anko.toast
 
@@ -34,6 +37,9 @@ class ConfigurationActivity :
     }
 
     private fun initObserver() {
+        viewModel.sipConnectionStatus.observe(this, Observer {
+            disableEnableControls(!it, btnUnInitialize)
+        })
     }
 
     override fun getHeaderTitle(): String {
@@ -169,7 +175,6 @@ class ConfigurationActivity :
                 it.printStackTrace()
             })
         )
-
     }
 
     fun onVideoQuality(view: View) {}
@@ -216,5 +221,15 @@ class ConfigurationActivity :
             it.printStackTrace()
         })
         )
+    }
+
+    private fun disableEnableControls(enable: Boolean, vg: ViewGroup) {
+        for (i in 0 until vg.getChildCount()) {
+            val child: View = vg.getChildAt(i)
+            child.isEnabled = enable
+            if (child is ViewGroup) {
+                disableEnableControls(enable, child as ViewGroup)
+            }
+        }
     }
 }

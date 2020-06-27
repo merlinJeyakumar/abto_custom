@@ -44,7 +44,8 @@ enum class AbtoState {
     REGISTERING,
     REGISTERING_FAILED,
     REGISTERED,
-    UNREGISTERED
+    UNREGISTERED,
+    DESTROYED
 }
 
 enum class CallState {

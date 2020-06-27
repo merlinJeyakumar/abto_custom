@@ -26,6 +26,7 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
+    private var menu_refresh: MenuItem? = null
     private var MESSAGE_NOTIFICATION_CHANNEL = "Incoming message"
 
     override fun getLayoutId(): Int {
@@ -50,6 +51,9 @@ class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
         viewModel.unregisterLiveData.observe(this, Observer {
             startActivity(Intent(this, RegisterActivity::class.java))
             finish()
+        })
+        viewModel.connectionStatus.observe(this, Observer {
+            menu_refresh?.isVisible = !it
         })
         addRxCall(RxBus.listen(AbtoRxEvents.MessageReceived::class.java)
             .observeOn(ui())
@@ -109,6 +113,7 @@ class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+        menu_refresh = menu.findItem(R.id.menu_refresh)
         return true
     }
 
@@ -121,6 +126,7 @@ class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
                     ConfigurationActivity::class.java
                 )
             )
+            R.id.menu_refresh -> viewModel.initPermission()
         }
         return super.onOptionsItemSelected(item)
     }
