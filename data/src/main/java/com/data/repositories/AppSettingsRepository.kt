@@ -92,4 +92,8 @@ class AppSettingsRepository(
     override fun putDraftText(draftText: String) {
         Prefs.putString(PREFS_DRAFT_TEXT,draftText)
     }
+
+    override fun clearAll() {
+        Prefs.clear()
+    }
 }

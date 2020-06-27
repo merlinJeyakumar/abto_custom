@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import com.merlin.abto.R
 import com.merlin.abto.databinding.LayoutRegisterBinding
 import com.merlin.abto.extension.obtainViewModel
+import com.merlin.abto.ui.activity.configuration.ConfigurationActivity
 import com.merlin.abto.ui.activity.main.MainActivity
 import com.support.baseApp.mvvm.MActionBarActivity
 import kotlinx.android.synthetic.main.layout_register.*

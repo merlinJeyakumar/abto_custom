@@ -14,4 +14,6 @@ interface IAppSettingsDataSource {
 
     fun getDraftText(): String
     fun putDraftText(draftText: String)
+
+    fun clearAll()
 }

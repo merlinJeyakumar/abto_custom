@@ -11,7 +11,7 @@ import com.merlin.abto.abto.rxjava.AbtoRxEvents
 import com.merlin.abto.abto.rxjava.AbtoState
 import com.support.baseApp.mvvm.MBaseViewModel
 import com.support.rxJava.RxBus
-import com.support.rxJava.Scheduler
+import com.support.rxJava.Scheduler.ui
 import com.support.utills.Log
 import com.vanniktech.rxpermission.Permission
 import com.vanniktech.rxpermission.RealRxPermission
@@ -42,6 +42,10 @@ class MainViewModel(
     private val _connectCall = MutableLiveData<Pair<String, Boolean>>()
     val connectCall: LiveData<Pair<String, Boolean>>
         get() = _connectCall
+
+    private val _unregisterLiveData = MutableLiveData<Unit>()
+    val unregisterLiveData: LiveData<Unit>
+        get() = _unregisterLiveData
 
     private val _sipText = MutableLiveData<String>()
     val sipText: LiveData<String>
@@ -95,13 +99,15 @@ class MainViewModel(
         _sipTransportTypes.postValue("[ST: $signalingTransportType - AT: $keepAliveInterval]")
 
         _sipText.postValue(appSettingsRepository.getDraftText())
+
+        _sipConnectStatus.postValue(if (abtoHelper.isAbtoRegistered()) "Registered" else "Registering")
     }
 
     private fun setupObserver() {
         addRxCall(
             RxBus.listen(AbtoRxEvents.AbtoConnectionChanged::class.java)
-                .subscribeOn(Scheduler.ui())
-                .observeOn(Scheduler.ui())
+                .subscribeOn(ui())
+                .observeOn(ui())
                 .subscribe {
                     when (it.abtoState) {
                         AbtoState.INITIALIZING -> {
@@ -136,6 +142,7 @@ class MainViewModel(
                         }
                         AbtoState.UNREGISTERED -> {
                             _sipConnectStatus.value = "unregistered"
+                            _unregisterLiveData.postValue(Unit)
                             Log.e(TAG, "setupObserver UNREGISTERED")
                         }
                     }
@@ -221,5 +228,15 @@ class MainViewModel(
     private fun onTextChanged(text: String = "") {
         Log.i(TAG, "onTextChanged: text $text")
         appSettingsRepository.putDraftText(text)
+    }
+
+    fun unregister() {
+        addRxCall(
+            abtoHelper.unregisterAbto()
+                .observeOn(ui())
+                .subscribeOn(ui()).subscribe({}, {
+                    toastMessage.value = it.localizedMessage
+                })
+        )
     }
 }

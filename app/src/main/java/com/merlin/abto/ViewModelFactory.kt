@@ -10,6 +10,7 @@ import com.data.repositories.AppSettingsRepository
 import com.domain.datasources.local.ILocalDataSource
 import com.merlin.abto.abto.AbtoHelper
 import com.merlin.abto.ui.activity.call.CallViewModel
+import com.merlin.abto.ui.activity.configuration.ConfigurationViewModel
 import com.merlin.abto.ui.activity.main.MainViewModel
 import com.merlin.abto.ui.activity.register.RegisterViewModel
 import com.merlin.abto.ui.activity.splash.SplashViewModel
@@ -30,6 +31,8 @@ class ViewModelFactory private constructor(
                     RegisterViewModel(provideAppDataSource, provideAbtoHelper)
                 isAssignableFrom(MainViewModel::class.java) ->
                     MainViewModel(provideAppDataSource, provideAbtoHelper)
+                isAssignableFrom(ConfigurationViewModel::class.java) ->
+                    ConfigurationViewModel(provideAppDataSource, provideAbtoHelper)
                 isAssignableFrom(CallViewModel::class.java) ->
                     CallViewModel(provideAppDataSource, provideAbtoHelper)
                 else ->

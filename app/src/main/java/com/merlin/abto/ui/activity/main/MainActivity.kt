@@ -4,8 +4,11 @@ import android.app.Notification.DEFAULT_SOUND
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
 import com.merlin.abto.R
@@ -13,10 +16,13 @@ import com.merlin.abto.abto.rxjava.AbtoRxEvents
 import com.merlin.abto.databinding.LayoutMainBinding
 import com.merlin.abto.extension.obtainViewModel
 import com.merlin.abto.ui.activity.call.CallActivity
+import com.merlin.abto.ui.activity.configuration.ConfigurationActivity
+import com.merlin.abto.ui.activity.register.RegisterActivity
 import com.support.baseApp.mvvm.MActionBarActivity
 import com.support.rxJava.RxBus
 import com.support.rxJava.Scheduler.ui
 import kotlinx.android.synthetic.main.layout_main.*
+import kotlin.math.abs
 import kotlin.random.Random
 
 class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
@@ -38,8 +44,12 @@ class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
     }
 
     private fun initObserver() {
-        viewModel.connectCall.observe(this@MainActivity, Observer {
-            CallActivity.startActivity(this@MainActivity, it.first, it.second)
+        viewModel.connectCall.observe(this, Observer {
+            CallActivity.startActivity(this, it.first, it.second)
+        })
+        viewModel.unregisterLiveData.observe(this, Observer {
+            startActivity(Intent(this, RegisterActivity::class.java))
+            finish()
         })
         addRxCall(RxBus.listen(AbtoRxEvents.MessageReceived::class.java)
             .observeOn(ui())
@@ -93,6 +103,25 @@ class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
             manager.createNotificationChannel(mChannel)
         }
 
-        manager.notify(Math.abs(Random(10).nextInt()), builder.build())
+        manager.notify(abs(Random(10).nextInt()), builder.build())
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_unregister -> viewModel.unregister()
+            R.id.menu_configuration -> startActivity(
+                Intent(
+                    this,
+                    ConfigurationActivity::class.java
+                )
+            )
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

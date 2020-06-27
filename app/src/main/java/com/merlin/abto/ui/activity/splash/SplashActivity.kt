@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import com.merlin.abto.R
 import com.merlin.abto.databinding.LayoutSplashBinding
 import com.merlin.abto.extension.obtainViewModel
+import com.merlin.abto.ui.activity.configuration.ConfigurationActivity
 import com.merlin.abto.ui.activity.main.MainActivity
 import com.merlin.abto.ui.activity.register.RegisterActivity
 import com.support.baseApp.mvvm.MBaseActivity

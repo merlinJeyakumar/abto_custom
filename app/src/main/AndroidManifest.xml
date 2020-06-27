@@ -56,13 +56,14 @@
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask" />
         <activity
-            android:configChanges="orientation|screenSize"
             android:name=".ui.activity.main.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTask" />
         <activity
-            android:configChanges="orientation|screenSize"
             android:name=".ui.activity.register.RegisterActivity"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTask" />
+        <activity android:name=".ui.activity.configuration.ConfigurationActivity" />
 
         <service
             android:name="org.abtollc.service.ABTOSipService"

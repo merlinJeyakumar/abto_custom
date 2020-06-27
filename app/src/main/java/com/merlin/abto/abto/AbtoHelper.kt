@@ -398,6 +398,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
     override fun unregisterAbto(): Completable {
         return Completable.create {
             abtoPhone.unregister()
+            abtoPhone.config.getAccount(abtoPhone.currentAccountId).dbContentValues.clear()
         }
     }
 
@@ -424,10 +425,14 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
     }
 
     override fun isAbtoAccountAdded(): Boolean {
-        return abtoPhone.currentAccountId.toInt() != -1
+        return abtoPhone.currentAccountId.toInt() != -1 && (abtoPhone.config.getAccount(abtoPhone.currentAccountId).active)
     }
 
     override fun isActiveCall(callId: Int): Boolean {
         return abtoPhone.isActiveCall(callId)
+    }
+
+    fun getAbtoConfiguration(): AbtoPhoneCfg {
+        return abtoPhone.config
     }
 }
