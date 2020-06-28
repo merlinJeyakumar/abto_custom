@@ -14,7 +14,6 @@ import com.support.rxJava.RxBus
 import com.support.rxJava.Scheduler.ui
 import com.support.utills.Log
 import com.vanniktech.rxpermission.Permission
-import com.vanniktech.rxpermission.Permission.State.GRANTED
 import com.vanniktech.rxpermission.RealRxPermission
 
 class RegisterViewModel(
@@ -158,7 +157,7 @@ class RegisterViewModel(
                 }
                 .subscribe({
                     if (it) {
-                        abtoHelper.initializeAbto(isForeground = true)
+                        abtoHelper.initializeAbto()
                     } else {
                         toastMessage.value = "Phone permission required for initializing SIP"
                     }

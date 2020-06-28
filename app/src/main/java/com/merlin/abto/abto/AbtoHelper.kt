@@ -21,6 +21,8 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
     private val TAG: String = AbtoHelper::class.java.simpleName
     private var abtoPhone: AbtoPhone = instance.abtoPhone
     private var isDestroyed: Boolean = false
+    private var RETRY_TIME: Int = 3
+    private var RegisterRetries = 0 //NOOP - Success, AboveFailLimit
 
     companion object {
         private var INSTANCE: AbtoHelper? = null
@@ -39,7 +41,8 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         sipId: String = appSettingsRepository.getCurrentUserSipModel().sipIdentity,
         sipPassword: String = appSettingsRepository.getCurrentUserSipModel().password,
         sipDisplayName: String = appSettingsRepository.getCurrentUserSipModel().displayName,
-        isForeground: Boolean = false
+        isForeground: Boolean = false,
+        forceInitializing: Boolean = false
     ) {
         isDestroyed = false
         abtoPhone.setInMessageListener { message, senderSipId, currentSipId ->
@@ -61,6 +64,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                             throwable = Exception(error).fillInStackTrace()
                         )
                     )
+                    error(Exception(error).fillInStackTrace())
                 }
                 OnInitializeListener.InitializeState.SUCCESS -> {
                     Log.i(TAG, "initializeAbto OnInitializeListener.InitializeState.SUCCESS")
@@ -80,34 +84,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         )
                         return@setInitializeListener
                     }
-                    abtoPhone.config?.addAccount(
-                        sipDomain,
-                        null,
-                        sipId,
-                        sipPassword,
-                        null,
-                        sipDisplayName,
-                        300,
-                        false
-                    )
-                    try {
-                        abtoPhone.register()
-                        RxBus.publish(
-                            AbtoRxEvents.AbtoConnectionChanged(
-                                abtoState = AbtoState.REGISTERING
-                            )
-                        )
-                        Log.i(TAG, "doAbtoRegister abtoPhone?.register()")
-                    } catch (e: RemoteException) {
-                        RxBus.publish(
-                            AbtoRxEvents.AbtoConnectionChanged(
-                                abtoState = AbtoState.REGISTERING_FAILED,
-                                throwable = e.fillInStackTrace()
-                            )
-                        )
-                        e.printStackTrace()
-                        Log.e(TAG, "doAbtoRegister abtoPhone?.register() ${e.localizedMessage}")
-                    }
+                    doAbtoRegister(sipDomain, sipId, sipPassword, sipDisplayName)
                 }
             }
 
@@ -125,6 +102,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         errorCode = accId
                     )
                 )
+                RegisterRetries = 0
             }
 
             override fun onUnRegistered(accId: Long) {
@@ -137,6 +115,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         abtoState = AbtoState.UNREGISTERED
                     )
                 )
+                RegisterRetries = 0
             }
 
             override fun onRegistrationFailed(accId: Long, errorCode: Int, errorMessage: String) {
@@ -149,8 +128,11 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         throwable = Exception(errorMessage)
                     )
                 )
-                if (!isForeground && !isDestroyed) {
+                if (!isForeground && !isDestroyed && RegisterRetries < RETRY_TIME) {
                     initializeAbto()
+                    RegisterRetries++
+                } else {
+                    RegisterRetries = 0
                 }
             }
         })
@@ -238,13 +220,53 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
             )
         }
 
-        initAbtoConfiguration()
-        abtoPhone.initialize(true)
-        RxBus.publish(
-            AbtoRxEvents.AbtoConnectionChanged(
-                AbtoState.INITIALIZING
+        if (forceInitializing || !isAbtoInitialized()) {
+            initAbtoConfiguration()
+            abtoPhone.initialize(true)
+            RxBus.publish(
+                AbtoRxEvents.AbtoConnectionChanged(
+                    AbtoState.INITIALIZING
+                )
             )
+        } else {
+            doAbtoRegister(sipDomain, sipId, sipPassword, sipDisplayName)
+        }
+    }
+
+    private fun doAbtoRegister(
+        sipDomain: String,
+        sipId: String,
+        sipPassword: String,
+        sipDisplayName: String
+    ) {
+        abtoPhone.config?.addAccount(
+            sipDomain,
+            null,
+            sipId,
+            sipPassword,
+            null,
+            sipDisplayName,
+            300,
+            false
         )
+        try {
+            abtoPhone.register()
+            RxBus.publish(
+                AbtoRxEvents.AbtoConnectionChanged(
+                    abtoState = AbtoState.REGISTERING
+                )
+            )
+            Log.i(TAG, "doAbtoRegister abtoPhone?.register()")
+        } catch (e: RemoteException) {
+            RxBus.publish(
+                AbtoRxEvents.AbtoConnectionChanged(
+                    abtoState = AbtoState.REGISTERING_FAILED,
+                    throwable = e.fillInStackTrace()
+                )
+            )
+            e.printStackTrace()
+            Log.e(TAG, "doAbtoRegister abtoPhone?.register() ${e.localizedMessage}")
+        }
     }
 
     private fun initAbtoConfiguration() {
@@ -263,20 +285,35 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         )
         config.setKeepAliveInterval(
             AbtoPhoneCfg.SignalingTransportType.getTypeByValue(
-                appSettingsRepository.getCurrentUserSipModel().keepAliveInterval
-            ), 30
+                appSettingsRepository.getCurrentUserSipModel().signalingTransportType
+            ), appSettingsRepository.getCurrentUserSipModel().keepAliveInterval
         )
-        config.videoQualityMode = AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_DEFAULT
-        config.isTLSVerifyServer = false;
-        config.hangupTimeout = 3 * 60
+        config.videoQualityMode =
+            when (appSettingsRepository.getCurrentUserSipModel().videoQuality) {
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_352_288.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_352_288
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_720_480.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_720_480
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1280_720.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1280_720
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1920_1080.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1920_1080
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_176_144.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_176_144
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_352_288_PORTRAIT.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_352_288_PORTRAIT
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_720_480_PORTRAIT.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_720_480_PORTRAIT
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1280_720_PORTRAIT.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1280_720_PORTRAIT
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1920_1080_PORTRAIT.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1920_1080_PORTRAIT
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_176_144_PORTRAIT.name -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_176_144_PORTRAIT
+                else -> AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_DEFAULT
+            }
+        config.isTLSVerifyServer = appSettingsRepository.getCurrentUserSipModel().verifyTLSServer;
+        config.registerTimeout = appSettingsRepository.getCurrentUserSipModel().registerTimeout
+        config.hangupTimeout = appSettingsRepository.getCurrentUserSipModel().hangupTimeout
         config.dtmFmode = AbtoPhoneCfg.DTMF_MODE.INFO
 
         config.isUseSRTP = false
-        config.setEnableAutoSendRtpVideo(true)
-        config.setEnableAutoSendRtpAudio(true)
+        config.setEnableAutoSendRtpVideo(appSettingsRepository.getCurrentUserSipModel().autoSendRtpVideo)
+        config.setEnableAutoSendRtpAudio(appSettingsRepository.getCurrentUserSipModel().autoSendRtpAudio)
         config.userAgent = this.abtoPhone.version()
-        config.sipPort = 0
-        AbtoPhoneCfg.setLogLevel(5, true)
+        config.sipPort = appSettingsRepository.getCurrentUserSipModel().sipPort
+        config.rtpPort = appSettingsRepository.getCurrentUserSipModel().rtpPort
+        AbtoPhoneCfg.setLogLevel(7, true)
         config.isMwiEnabled = true
     }
 
@@ -400,8 +437,19 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
 
     override fun unregisterAbto(): Completable {
         return Completable.create {
-            abtoPhone.unregister()
+            val isRegistered = isAbtoRegistered()
+            if (isRegistered) {
+                abtoPhone.unregister()
+            }
             abtoPhone.config.getAccount(abtoPhone.currentAccountId).dbContentValues.clear()
+            if (!isRegistered) {
+                RxBus.publish(
+                    AbtoRxEvents.AbtoConnectionChanged(
+                        abtoState = AbtoState.UNREGISTERED
+                    )
+                )
+                RegisterRetries = 0
+            }
         }
     }
 
@@ -429,6 +477,10 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
 
     override fun isAbtoAccountAdded(): Boolean {
         return abtoPhone.currentAccountId.toInt() != -1 && (abtoPhone.config.getAccount(abtoPhone.currentAccountId).active)
+    }
+
+    override fun isAbtoInitialized(): Boolean {
+        return abtoPhone.isActive
     }
 
     override fun isActiveCall(callId: Int): Boolean {

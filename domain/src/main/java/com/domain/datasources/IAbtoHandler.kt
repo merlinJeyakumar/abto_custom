@@ -25,6 +25,7 @@ interface IAbtoHandler {
     fun unregisterAbto():Completable
     fun isAbtoRegistered(): Boolean
     fun isAbtoAccountAdded(): Boolean
+    fun isAbtoInitialized(): Boolean
     fun isActiveCall(callId: Int): Boolean
     fun destroyAbtoService(): Completable
 }

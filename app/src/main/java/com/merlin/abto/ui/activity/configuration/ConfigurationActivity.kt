@@ -83,13 +83,13 @@ class ConfigurationActivity :
             if (it.boolean) {
                 when (it.selectedItem) {
                     AbtoPhoneCfg.SignalingTransportType.UDP.name -> viewModel.setSignalingTransport(
-                        AbtoPhoneCfg.SignalingTransportType.getTypeByValue(1)
+                        AbtoPhoneCfg.SignalingTransportType.UDP.value
                     )
                     AbtoPhoneCfg.SignalingTransportType.TCP.name -> viewModel.setSignalingTransport(
-                        AbtoPhoneCfg.SignalingTransportType.getTypeByValue(2)
+                        AbtoPhoneCfg.SignalingTransportType.TCP.value
                     )
                     AbtoPhoneCfg.SignalingTransportType.TLS.name -> viewModel.setSignalingTransport(
-                        AbtoPhoneCfg.SignalingTransportType.getTypeByValue(3)
+                        AbtoPhoneCfg.SignalingTransportType.TLS.value
                     )
                 }
             }
@@ -108,7 +108,8 @@ class ConfigurationActivity :
     fun onKeepAliveSignalingTransportInterval(view: View) {
         addRxCall(getInputDialog(
             title = "Keep Alive Signaling Transport Interval",
-            inputType = InputType.TYPE_CLASS_NUMBER
+            inputType = InputType.TYPE_CLASS_NUMBER,
+            defaultText = viewModel.getCurrentSipModel().keepAliveInterval.toString()
         ).map {
             if (it.isPositive) {
                 if (it.input.isEmpty() || (it.input.toInt() <= 0)) {
@@ -132,7 +133,8 @@ class ConfigurationActivity :
     fun onRtpPort(view: View) {
         addRxCall(getInputDialog(
             title = "RTP Port",
-            inputType = InputType.TYPE_CLASS_NUMBER
+            inputType = InputType.TYPE_CLASS_NUMBER,
+            defaultText = viewModel.getCurrentSipModel().rtpPort.toString()
         ).map {
             if (it.isPositive) {
                 if (it.input.isEmpty() || (it.input.toInt() <= 0)) {
@@ -156,7 +158,8 @@ class ConfigurationActivity :
     fun onSipPort(view: View) {
         addRxCall(getInputDialog(
             title = "SIP Port",
-            inputType = InputType.TYPE_CLASS_NUMBER
+            inputType = InputType.TYPE_CLASS_NUMBER,
+            defaultText = viewModel.getCurrentSipModel().sipPort.toString()
         ).map {
             if (it.isPositive) {
                 if (it.input.isEmpty() || (it.input.toInt() <= 0)) {
@@ -177,7 +180,37 @@ class ConfigurationActivity :
         )
     }
 
-    fun onVideoQuality(view: View) {}
+    fun onVideoQuality(view: View) {
+        addRxCall(getListDialog(
+            title = "Signaling Transport", listString = listOf(
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_DEFAULT.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_352_288.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_720_480.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1280_720.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1920_1080.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_176_144.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_352_288_PORTRAIT.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_720_480_PORTRAIT.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1280_720_PORTRAIT.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_1920_1080_PORTRAIT.name,
+                AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_176_144_PORTRAIT.name
+            )
+        ).map {
+            if (it.boolean) {
+                viewModel.setVideoQuality(it.selectedItem!!)
+            }
+            return@map it.boolean
+        }.subscribe({
+            if (it) {
+                toast("Abto service restart required")
+            }
+        }, {
+            toast(it.localizedMessage)
+            it.printStackTrace()
+        })
+        )
+
+    }
 
     fun onAutoRtpVideo(view: View) {
         addRxCall(getListDialog(
@@ -210,6 +243,78 @@ class ConfigurationActivity :
         ).map {
             if (it.boolean) {
                 viewModel.setAutoSendRtpAudio(it.selectedItem?.contentEquals(true.toString())!!)
+            }
+            return@map it.boolean
+        }.subscribe({
+            if (it) {
+                toast("Abto service restart required")
+            }
+        }, {
+            toast(it.localizedMessage)
+            it.printStackTrace()
+        })
+        )
+    }
+
+    fun onRegisterTimeout(view: View) {
+        addRxCall(getInputDialog(
+            title = "Register Timeout",
+            inputType = InputType.TYPE_CLASS_NUMBER,
+            defaultText = viewModel.getCurrentSipModel().registerTimeout.toString()
+        ).map {
+            if (it.isPositive) {
+                if (it.input.isEmpty() || (it.input.toInt() <= 0)) {
+                    error("input not valid")
+                } else {
+                    viewModel.setRegisterTimeout(it.input.toInt())
+                }
+            }
+        }
+            .retry(Predicate {
+                return@Predicate true
+            })
+            .subscribe({
+            }, {
+                toast(it.localizedMessage)
+                it.printStackTrace()
+            })
+        )
+    }
+
+    fun onHangupTimeout(view: View) {
+        addRxCall(getInputDialog(
+            title = "Hangup Timeout",
+            inputType = InputType.TYPE_CLASS_NUMBER,
+            defaultText = viewModel.getCurrentSipModel().hangupTimeout.toString()
+        ).map {
+            if (it.isPositive) {
+                if (it.input.isEmpty() || (it.input.toInt() <= 0)) {
+                    error("input not valid")
+                } else {
+                    viewModel.setHangupTimeout(it.input.toInt())
+                }
+            }
+        }
+            .retry(Predicate {
+                return@Predicate true
+            })
+            .subscribe({
+            }, {
+                toast(it.localizedMessage)
+                it.printStackTrace()
+            })
+        )
+    }
+
+    fun onVerifyTlsServer(view: View) {
+        addRxCall(getListDialog(
+            title = "Verify TLS Server", listString = listOf(
+                true.toString(),
+                false.toString()
+            )
+        ).map {
+            if (it.boolean) {
+                viewModel.setVerifyTlsServer(it.selectedItem?.contentEquals(true.toString())!!)
             }
             return@map it.boolean
         }.subscribe({

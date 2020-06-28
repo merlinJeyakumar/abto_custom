@@ -78,8 +78,7 @@
                             style="@style/TextAppearance.MaterialComponents.Caption"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="NA"
-                            android:text="@{viewmodel.signallingTransport}" />
+                            android:text="@{viewmodel.signallingTransport,default=NA}" />
 
                     </LinearLayout>
 
@@ -96,35 +95,80 @@
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:onClick="onKeepAliveSignalingTransportInterval"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
 
-                        <LinearLayout
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/_10sdp">
+                            android:text="Keep Alive Signalling Interval" />
 
-                            <TextView
-                                style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Keep Alive Signalling Interval" />
-
-                            <TextView
-                                style="@style/TextAppearance.MaterialComponents.Caption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="NA"
-                                android:text="@{viewmodel.keepAliveTransportInterval}" />
-
-                        </LinearLayout>
-
-                        <View
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:background="#cacaca" />
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.keepAliveTransportInterval,default=NA}" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:background="#cacaca" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:onClick="onRegisterTimeout"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
+
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Register Timeout" />
+
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.registerTimeout,default=NA}" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:background="#cacaca" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:onClick="onHangupTimeout"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
+
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Hangup Timeout" />
+
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.hangupTimeout,default=NA}" />
 
                     </LinearLayout>
 
@@ -141,35 +185,20 @@
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:onClick="onRtpPort"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
 
-                        <LinearLayout
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/_10sdp">
+                            android:text="RTP Port" />
 
-                            <TextView
-                                style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="RTP Port" />
-
-                            <TextView
-                                style="@style/TextAppearance.MaterialComponents.Caption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="NA"
-                                android:text="@{viewmodel.rtpPort}" />
-
-                        </LinearLayout>
-
-                        <View
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:background="#cacaca" />
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.rtpPort,default=NA}" />
 
                     </LinearLayout>
 
@@ -186,35 +215,20 @@
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:onClick="onSipPort"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
 
-                        <LinearLayout
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/_10sdp">
+                            android:text="SIP Port" />
 
-                            <TextView
-                                style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="SIP Port" />
-
-                            <TextView
-                                style="@style/TextAppearance.MaterialComponents.Caption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="NA"
-                                android:text="@{viewmodel.sipPort}" />
-
-                        </LinearLayout>
-
-                        <View
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:background="#cacaca" />
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.sipPort,default=NA}" />
 
                     </LinearLayout>
 
@@ -231,35 +245,20 @@
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:onClick="onVideoQuality"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
 
-                        <LinearLayout
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/_10sdp">
+                            android:text="Video Quality" />
 
-                            <TextView
-                                style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Video Quality" />
-
-                            <TextView
-                                style="@style/TextAppearance.MaterialComponents.Caption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="NA"
-                                android:text="@{viewmodel.videoQuality}" />
-
-                        </LinearLayout>
-
-                        <View
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:background="#cacaca" />
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.videoQuality,default=NA}" />
 
                     </LinearLayout>
 
@@ -276,35 +275,20 @@
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:onClick="onAutoRtpVideo"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
 
-                        <LinearLayout
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/_10sdp">
+                            android:text="Auto Send RTP Video" />
 
-                            <TextView
-                                style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Auto Send RTP Video" />
-
-                            <TextView
-                                style="@style/TextAppearance.MaterialComponents.Caption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="NA"
-                                android:text="@{viewmodel.autoSendRtpVideo.toString()}" />
-
-                        </LinearLayout>
-
-                        <View
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:background="#cacaca" />
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.autoSendRtpVideo.toString(),default=NA}" />
 
                     </LinearLayout>
 
@@ -321,35 +305,20 @@
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:onClick="onAutoRtpAudio"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
 
-                        <LinearLayout
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/_10sdp">
+                            android:text="Auto Send RTP Audio" />
 
-                            <TextView
-                                style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Auto Send RTP Audio" />
-
-                            <TextView
-                                style="@style/TextAppearance.MaterialComponents.Caption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="NA"
-                                android:text="@{viewmodel.autoSendRtpAudio.toString()}" />
-
-                        </LinearLayout>
-
-                        <View
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:background="#cacaca" />
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.autoSendRtpAudio.toString(),default=NA}" />
 
                     </LinearLayout>
 
@@ -359,6 +328,30 @@
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:layout_marginRight="@dimen/_5sdp"
                         android:background="#cacaca" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:onClick="onVerifyTlsServer"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
+
+                        <TextView
+                            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Verify TLS Server" />
+
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.verifyTlsServer,default=NA}" />
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 

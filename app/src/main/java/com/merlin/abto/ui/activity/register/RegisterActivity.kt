@@ -2,6 +2,8 @@ package com.merlin.abto.ui.activity.register
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.lifecycle.Observer
 import com.merlin.abto.R
@@ -64,5 +66,23 @@ class RegisterActivity : MActionBarActivity<LayoutRegisterBinding, RegisterViewM
             val listItem: String = listview.adapter.getItem(position) as String
             viewModel.setUI(listItem)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_register, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_configuration -> startActivity(
+                Intent(
+                    this,
+                    ConfigurationActivity::class.java //FIXME: NOT_WORKING_AS_EXPECTED_WHILE
+                )
+            )
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

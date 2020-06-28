@@ -71,9 +71,10 @@ class MainViewModel(
                 ).all {
                     it.state() == Permission.State.GRANTED
                 }
-                .subscribe({
+                .subscribe({ it ->
                     if (it) {
                         abtoHelper.initializeAbto()
+
                     } else {
                         sipConnectionStatus.value = "Not Connected, Phone Permission required"
                         toastMessage.value = "Phone Permission required"
@@ -92,15 +93,7 @@ class MainViewModel(
             } else {
                 "UDP"
             }
-
-        val keepAliveInterval =
-            if (appSettingsRepository.getCurrentUserSipModel().keepAliveInterval == AbtoPhoneCfg.SignalingTransportType.TCP.value) {
-                "TCP"
-            } else {
-                "UDP"
-            }
-
-        _sipTransportTypes.postValue("[ST: $signalingTransportType - AT: $keepAliveInterval]")
+        _sipTransportTypes.postValue("[ST: $signalingTransportType - AT: ${appSettingsRepository.getCurrentUserSipModel().keepAliveInterval}]")
 
         _sipText.postValue(appSettingsRepository.getDraftText())
 

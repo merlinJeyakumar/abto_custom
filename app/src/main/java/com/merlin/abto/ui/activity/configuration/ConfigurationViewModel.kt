@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.data.repositories.AppSettingsRepository
+import com.domain.models.CurrentUserSipModel
 import com.merlin.abto.AppController
 import com.merlin.abto.abto.AbtoHelper
 import com.merlin.abto.abto.rxjava.AbtoRxEvents
@@ -16,7 +17,6 @@ import com.support.rxJava.Scheduler.ui
 import com.support.utills.Log
 import com.vanniktech.rxpermission.Permission
 import com.vanniktech.rxpermission.RealRxPermission
-import org.abtollc.sdk.AbtoPhone
 import org.abtollc.sdk.AbtoPhoneCfg
 
 class ConfigurationViewModel(
@@ -69,6 +69,18 @@ class ConfigurationViewModel(
     private val _unInitializeLabelVisibility = MutableLiveData<Int>()
     val unInitializeLabelVisibility: LiveData<Int>
         get() = _unInitializeLabelVisibility
+
+    private val _registerTimeout = MutableLiveData<String>()
+    val registerTimeout: LiveData<String>
+        get() = _registerTimeout
+
+    private val _hangupTimeout = MutableLiveData<String>()
+    val hangupTimeout: LiveData<String>
+        get() = _hangupTimeout
+
+    private val _verifyTlsServer = MutableLiveData<String>()
+    val verifyTlsServer: LiveData<String>
+        get() = _verifyTlsServer
 
     override fun subscribe() {
         initPermission()
@@ -152,7 +164,7 @@ class ConfigurationViewModel(
     private fun onInitializeCreatedDestroyed(isInitialized: Boolean) {
         _sipConnectionStatus.postValue(isInitialized)
         if (isInitialized) {
-            _sipInitializeButton.postValue("Save & Initialize")
+            _sipInitializeButton.postValue("UnInitialize & Configure")
             _unInitializeLabelVisibility.postValue(View.VISIBLE)
         } else {
             _unInitializeLabelVisibility.postValue(View.GONE)
@@ -162,67 +174,121 @@ class ConfigurationViewModel(
     }
 
     private fun initUi() {
-        _sipConnectionStatus.postValue(abtoHelper.isAbtoRegistered())
-        _sipConnectStatusText.postValue(if (abtoHelper.isAbtoRegistered()) "Registered" else "Registering")
-        _sipInitializeButton.postValue(if (abtoHelper.isAbtoRegistered()) "UnInitialize" else "Save & Initialize")
-        _signallingTransport.postValue(abtoHelper.getAbtoConfiguration().signalingTransport.name)
-        _keepAliveTransportInterval.postValue(
-            "${abtoHelper.getAbtoConfiguration()
-                .getKeepAliveInterval(abtoHelper.getAbtoConfiguration().signalingTransport)}"
+        _sipConnectionStatus.postValue(abtoHelper.isAbtoInitialized())
+        _sipConnectStatusText.postValue(if (abtoHelper.isAbtoInitialized()) "Registered" else "Registering")
+        _sipInitializeButton.postValue(if (abtoHelper.isAbtoInitialized()) "UnInitialize" else "Save & Initialize")
+        _unInitializeLabelVisibility.postValue(if (abtoHelper.isAbtoInitialized()) View.VISIBLE else View.GONE)
+        _signallingTransport.postValue(
+            AbtoPhoneCfg.SignalingTransportType.getTypeByValue(
+                appSettingsRepository.getCurrentUserSipModel().signalingTransportType
+            ).name
         )
-        _sipPort.postValue("${abtoHelper.getAbtoConfiguration().sipPort}")
-        _rtpPort.postValue("${abtoHelper.getAbtoConfiguration().rtpPort}")
-        _videoQuality.postValue(abtoHelper.getAbtoConfiguration().videoQualityMode.name)
-        _autoSendRtpAudio.postValue(abtoHelper.getAbtoConfiguration().isEnabledAutoSendRtpAudio)
-        _autoSendRtpVideo.postValue(abtoHelper.getAbtoConfiguration().isEnabledAutoSendRtpVideo)
+        _keepAliveTransportInterval.postValue("${appSettingsRepository.getCurrentUserSipModel().keepAliveInterval}")
+        _sipPort.postValue("${appSettingsRepository.getCurrentUserSipModel().sipPort}")
+        _rtpPort.postValue("${appSettingsRepository.getCurrentUserSipModel().rtpPort}")
+        _videoQuality.postValue(appSettingsRepository.getCurrentUserSipModel().videoQuality)
+        _autoSendRtpAudio.postValue(appSettingsRepository.getCurrentUserSipModel().autoSendRtpAudio)
+        _autoSendRtpVideo.postValue(appSettingsRepository.getCurrentUserSipModel().autoSendRtpVideo)
+        _registerTimeout.postValue(appSettingsRepository.getCurrentUserSipModel().registerTimeout.toString())
+        _hangupTimeout.postValue(appSettingsRepository.getCurrentUserSipModel().hangupTimeout.toString())
+        _verifyTlsServer.postValue(appSettingsRepository.getCurrentUserSipModel().verifyTLSServer.toString())
     }
 
-    fun setSignalingTransport(typeByValue: AbtoPhoneCfg.SignalingTransportType?) {
-        abtoHelper.getAbtoConfiguration().setSignallingTransport(typeByValue)
+    fun getCurrentSipModel(): CurrentUserSipModel {
+        return appSettingsRepository.getCurrentUserSipModel()
+    }
+
+    fun setSignalingTransport(signalingTransportType: Int) {
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.signalingTransportType = signalingTransportType
+            })
         initUi()
     }
 
-    fun setKeepAliveInterval(interval: Int = 30) {
-        abtoHelper.getAbtoConfiguration()
-            .setKeepAliveInterval(abtoHelper.getAbtoConfiguration().signalingTransport, interval)
+    fun setKeepAliveInterval(keepAliveInterval: Int = 30) {
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.keepAliveInterval = keepAliveInterval
+            })
         initUi()
     }
 
     fun setSipPort(sipPort: Int = 0) {
-        abtoHelper.getAbtoConfiguration().sipPort = sipPort
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.sipPort = sipPort
+            })
         initUi()
     }
 
     fun setRtpPort(rtpPort: Int = 0) {
-        abtoHelper.getAbtoConfiguration().rtpPort = rtpPort
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.rtpPort = rtpPort
+            })
         initUi()
     }
 
     fun setVideoQuality(
-        videoMode: AbtoPhoneCfg.VIDEO_QUALITY_MODE = AbtoPhoneCfg.VIDEO_QUALITY_MODE.VIDEO_MODE_DEFAULT
+        videoMode: String
     ) {
-        abtoHelper.getAbtoConfiguration().videoQualityMode = videoMode
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.videoQuality = videoMode
+            })
         initUi()
     }
 
     fun setAutoSendRtpAudio(isEnabled: Boolean = false) {
-        abtoHelper.getAbtoConfiguration().setEnableAutoSendRtpAudio(isEnabled)
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.autoSendRtpAudio = isEnabled
+            })
         initUi()
     }
 
     fun setAutoSendRtpVideo(isEnabled: Boolean = false) {
-        abtoHelper.getAbtoConfiguration().setEnableAutoSendRtpVideo(isEnabled)
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.autoSendRtpVideo = isEnabled
+            })
+        initUi()
+    }
+
+    fun setRegisterTimeout(registerTimeout: Int) {
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.registerTimeout = registerTimeout
+            })
+        initUi()
+    }
+
+    fun setHangupTimeout(hangupTimeout: Int) {
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.hangupTimeout = hangupTimeout
+            })
+        initUi()
+    }
+
+    fun setVerifyTlsServer(verifyTlsServer: Boolean) {
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.verifyTLSServer = verifyTlsServer
+            })
         initUi()
     }
 
     fun destroyAbtoService() {
-        if (abtoHelper.isAbtoRegistered()) {
+        if (abtoHelper.isAbtoInitialized()) {
             addRxCall(abtoHelper.destroyAbtoService().subscribe({}, {
                 toastMessage.postValue(it.localizedMessage)
                 it.printStackTrace()
             }))
         } else {
             abtoHelper.initializeAbto(isForeground = true)
+
         }
     }
 }
