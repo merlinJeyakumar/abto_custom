@@ -320,7 +320,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
     override fun sendMessage(receiverId: String, message: String): Completable {
         return Completable.create {
             if (abtoPhone.config.isConnectivityValid) {
-                abtoPhone.sendTextMessage(abtoPhone.currentAccountId, receiverId, message)
+                abtoPhone.sendTextMessage(abtoPhone.currentAccountId, message, receiverId)
                 RxBus.publish(
                     AbtoRxEvents.MessageStatusChanged(
                         messageState = MessageState.SENDING

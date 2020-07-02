@@ -100,7 +100,7 @@ class CallActivity : MBaseActivity<LayoutCall2Binding, CallViewModel>() {
 
     private fun initData() {
         intentSipId = intent.extras?.getString(RECEIVER_SIP_ID, "")
-        intentIsVideoCall = intent.extras?.getBoolean(IS_VIDEO_CALL, false)!!
+        intentIsVideoCall = intent.extras?.getBoolean(IS_VIDEO_CALL, false)!! //FIXME: INCOMING CALL LABEL NOT WORKING
         intentIsIncomingCall = intent.extras?.getBoolean(IS_INCOMING_CALL, false)!!
         intentCallId = intent?.getIntExtra(AbtoPhone.CALL_ID, 0)!!
         intentIsAttendedCall = intent?.getBooleanExtra(IS_ATTENDED_CALL, false)!!

@@ -257,7 +257,7 @@ class MainViewModel(
         Log.e(TAG, "SipAddress $sipAddress")
 
         if (abtoHelper.isAbtoRegistered()) {
-            addRxCall(abtoHelper.sendMessage(sipIdentity, message).subscribe({}, {
+            addRxCall(abtoHelper.sendMessage(sipAddress, message).subscribe({}, {
                 Log.e(TAG, it.localizedMessage)
                 it.printStackTrace()
             }))

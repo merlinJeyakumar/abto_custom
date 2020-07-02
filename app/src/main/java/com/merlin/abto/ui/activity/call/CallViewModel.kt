@@ -264,7 +264,10 @@ class CallViewModel(
     }
 
     fun doHangup() {
-        abtoHelper.hangupCall(activeCallId)
+        addRxCall(abtoHelper.hangupCall(activeCallId).subscribe({}, {
+            it.printStackTrace()
+            Log.e(TAG, it.localizedMessage)
+        }))
     }
 
     fun setSpeakerMode() {
