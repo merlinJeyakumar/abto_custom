@@ -52,6 +52,7 @@ dependencies {
     api jodaTimeDependencies.values()
     api glideDependencies.values()
     api libraries.anko_jetbrains
+    api fireBaseDependencies.firebase_crashlytics
 
     kapt kaptProcessorDep.room_compiler
 

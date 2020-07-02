@@ -264,20 +264,7 @@ class CallViewModel(
     }
 
     fun doHangup() {
-        if (abtoHelper.isActiveCall(activeCallId)) { //TODO: NOT WORKING AS EXPECTED WHILE DIAL AFTER RINGING
-            addRxCall(abtoHelper.hangupCall(activeCallId).subscribe({}, {
-                it.printStackTrace()
-                toastMessage.value = it.localizedMessage
-            }))
-        } else {
-            if (activeCallState.name.contentEquals(CallState.CONNECTING.name)) {
-                addRxCall(abtoHelper.hangupCall(activeCallId).subscribe({}, {
-                    it.printStackTrace()
-                    toastMessage.value = it.localizedMessage
-                }))
-            }
-            _callConnectDisconnect.postValue(false)
-        }
+        abtoHelper.hangupCall(activeCallId)
     }
 
     fun setSpeakerMode() {

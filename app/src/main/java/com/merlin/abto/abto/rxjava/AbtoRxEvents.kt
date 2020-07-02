@@ -10,9 +10,9 @@ class AbtoRxEvents {
     )
 
     class MessageStatusChanged(
-        messageState: MessageState,
-        errorCode: Int = 0,
-        sipMessage: SipMessage? = null
+        var messageState: MessageState,
+        var errorCode: Int = 0,
+        var sipMessage: SipMessage? = null
     )
 
     class AbtoConnectionChanged(

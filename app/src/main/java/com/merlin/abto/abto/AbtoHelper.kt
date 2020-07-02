@@ -1,19 +1,16 @@
 package com.merlin.abto.abto
 
-import android.os.Environment
 import android.os.RemoteException
 import android.view.SurfaceView
 import com.data.repositories.AppSettingsRepository
 import com.domain.datasources.IAbtoHandler
-import com.merlin.abto.core.AppController
-import com.merlin.abto.core.AppController.Companion.instance
 import com.merlin.abto.R
 import com.merlin.abto.abto.rxjava.*
-import com.support.dateClass.DateUtils.getTodayDateTime
+import com.merlin.abto.abto.utility.getForegroundNotification
+import com.merlin.abto.core.AppController
+import com.merlin.abto.core.AppController.Companion.instance
 import com.support.rxJava.RxBus
 import com.support.utills.Log
-import com.support.utills.Log.shareLogDirFile
-import com.support.utills.ZipManager
 import io.reactivex.Completable
 import io.reactivex.Single
 import org.abtollc.api.SipCallSession.StatusCode.*
@@ -226,7 +223,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
 
         if (forceInitializing || !isAbtoInitialized()) {
             initAbtoConfiguration()
-            abtoPhone.initialize(true)
+            abtoPhone.initializeForeground(instance.getForegroundNotification())
             RxBus.publish(
                 AbtoRxEvents.AbtoConnectionChanged(
                     AbtoState.INITIALIZING
@@ -503,24 +500,6 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                 )
             )
             isDestroyed = true
-        }
-    }
-
-    fun getAbtoLogs(): Single<File> {
-        return Single.create<File> {
-            val zipManager = ZipManager()
-            zipManager.dirChecker(getAbtoLogsPath().absolutePath)
-            val fileList =
-                mutableListOf<File>().apply { addAll(getAbtoLogsPath().listFiles()!!.toList()) }
-            val zipFile = File(instance.shareLogDirFile(), "abtoLogs_${getTodayDateTime()}.zip")
-            zipManager.zip(fileList, zipFile)
-            it.onSuccess(zipFile)
-        }
-    }
-
-    fun getAbtoLogsPath(): File {
-        return File("${Environment.getExternalStorageDirectory()?.absolutePath}${File.separator}${instance.packageName}/logs").apply {
-            this.mkdirs()
         }
     }
 }

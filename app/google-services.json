@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "198621296030",
-    "firebase_url": "https://travelmantics-e2d2f.firebaseio.com",
-    "project_id": "travelmantics-e2d2f",
-    "storage_bucket": "travelmantics-e2d2f.appspot.com"
+    "project_number": "1014725490091",
+    "firebase_url": "https://abto-voip-custom.firebaseio.com",
+    "project_id": "abto-voip-custom",
+    "storage_bucket": "abto-voip-custom.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:198621296030:android:374b14be1d16f692f1d28f",
+        "mobilesdk_app_id": "1:1014725490091:android:b8495e760d3234839d8eee",
         "android_client_info": {
           "package_name": "com.merlin.abto"
         }
       },
       "oauth_client": [
         {
-          "client_id": "198621296030-ab8s27sqg5g1h883krap7u3c6bkd1d4e.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.merlin.abto",
-            "certificate_hash": "8827e87137f17a3d3645077da172f00e4471dfa5"
-          }
-        },
-        {
-          "client_id": "198621296030-0rhpb5uobjvlcdb0gdjb8v9pm9urt3ed.apps.googleusercontent.com",
+          "client_id": "1014725490091-jfr4bdv0b7hru6nbq0ipkqhhsjrfhavp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA_DIySdqWbIFp_36xa7Gkqw44CYfqJBNo"
+          "current_key": "AIzaSyAXLoeEIcPn7x9k4ZPryTldaMWISZlLQwU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "198621296030-0rhpb5uobjvlcdb0gdjb8v9pm9urt3ed.apps.googleusercontent.com",
+              "client_id": "1014725490091-jfr4bdv0b7hru6nbq0ipkqhhsjrfhavp.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

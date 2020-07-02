@@ -156,6 +156,8 @@ class RegisterViewModel(
         addRxCall(
             RealRxPermission.getInstance(AppController.instance)
                 .requestEach(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.USE_SIP,

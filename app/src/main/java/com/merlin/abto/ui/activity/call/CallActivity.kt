@@ -10,6 +10,7 @@ import com.merlin.abto.R
 import com.merlin.abto.databinding.LayoutCall2Binding
 import com.merlin.abto.extension.obtainViewModel
 import com.support.baseApp.mvvm.MBaseActivity
+import com.support.utills.Log
 import com.vanniktech.rxpermission.Permission
 import com.vanniktech.rxpermission.RealRxPermission
 import kotlinx.android.synthetic.main.layout_call_2.*
@@ -18,6 +19,7 @@ import org.jetbrains.anko.toast
 
 class CallActivity : MBaseActivity<LayoutCall2Binding, CallViewModel>() {
 
+    private var TAG: String = CallActivity::class.java.simpleName
     private var intentIsIncomingCall: Boolean = false
     private var intentIsVideoCall: Boolean = false
     private var intentSipId: String? = ""

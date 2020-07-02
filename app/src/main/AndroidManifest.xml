@@ -71,6 +71,7 @@
         <service
             android:name="org.abtollc.service.ABTOSipService"
             android:foregroundServiceType="phoneCall"
+            android:enabled="true"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="org.abtollc.service.ABTOSipService" />

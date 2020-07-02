@@ -9,6 +9,9 @@ import com.merlin.abto.core.AppController
 import com.merlin.abto.abto.AbtoHelper
 import com.merlin.abto.abto.rxjava.AbtoRxEvents
 import com.merlin.abto.abto.rxjava.AbtoState
+import com.merlin.abto.abto.rxjava.MessageState
+import com.merlin.abto.abto.utility.getAbtoLogs
+import com.merlin.abto.abto.utility.getAbtoLogsPath
 import com.support.baseApp.mvvm.MBaseViewModel
 import com.support.rxJava.RxBus
 import com.support.rxJava.Scheduler.ui
@@ -68,6 +71,8 @@ class MainViewModel(
         addRxCall(
             RealRxPermission.getInstance(AppController.instance)
                 .requestEach(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_PHONE_STATE,
@@ -160,6 +165,26 @@ class MainViewModel(
                         }
                     }
                 })
+        addRxCall(
+            RxBus.listen(AbtoRxEvents.MessageStatusChanged::class.java)
+                .subscribeOn(ui())
+                .observeOn(ui()).subscribe({
+                    when (it.messageState) {
+                        MessageState.SENDING -> {
+                            toastMessage.postValue("Sending to ${it.sipMessage?.to}")
+                        }
+                        MessageState.SENT -> {
+                            toastMessage.postValue("Message Sent")
+                        }
+                        MessageState.ERROR -> {
+                            toastMessage.postValue("Error while sending ${it.sipMessage?.errorContent}")
+                        }
+                    }
+                }, {
+                    it.printStackTrace()
+                    Log.e(TAG, it.localizedMessage)
+                })
+        )
     }
 
     fun initAdapterAutoComplete(): ArrayAdapter<String> {
@@ -232,7 +257,10 @@ class MainViewModel(
         Log.e(TAG, "SipAddress $sipAddress")
 
         if (abtoHelper.isAbtoRegistered()) {
-            abtoHelper.sendMessage(sipIdentity, message)
+            addRxCall(abtoHelper.sendMessage(sipIdentity, message).subscribe({}, {
+                Log.e(TAG, it.localizedMessage)
+                it.printStackTrace()
+            }))
         } else {
             toastMessage.value = "abto registration not available"
         }
@@ -255,20 +283,21 @@ class MainViewModel(
 
     fun shareLog() {
         addRxCall(
-            abtoHelper.getAbtoLogs()
+            getAbtoLogs()
                 .subscribeOn(Schedulers.io())
                 .observeOn(ui())
                 .subscribe({
                     getContext().shareFile(it, "s-merlin@mithrai.com")
                 }, {
-//                    Log.e(TAG, it.localizedMessage)
+                    Log.e(TAG, it.localizedMessage)
                     it.printStackTrace()
                 })
         )
     }
 
     fun clearLog() {
-        abtoHelper.getAbtoLogsPath().deleteRecursively()
+        getAbtoLogsPath().deleteRecursively()
+        toastMessage.postValue("Logs cleared, restart for logs")
     }
 
     fun setSipAddress(it: String) {
