@@ -1,4 +1,4 @@
-package com.merlin.abto
+package com.merlin.abto.core
 
 open class Event<out T>(private val content: T) {
 
