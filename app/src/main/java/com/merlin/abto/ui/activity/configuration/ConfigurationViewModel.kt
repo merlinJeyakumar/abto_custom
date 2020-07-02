@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.data.repositories.AppSettingsRepository
 import com.domain.models.CurrentUserSipModel
-import com.merlin.abto.AppController
+import com.merlin.abto.core.AppController
 import com.merlin.abto.abto.AbtoHelper
 import com.merlin.abto.abto.rxjava.AbtoRxEvents
 import com.merlin.abto.abto.rxjava.AbtoState
@@ -83,15 +83,16 @@ class ConfigurationViewModel(
         get() = _verifyTlsServer
 
     override fun subscribe() {
-        initPermission()
         setupObserver()
         initUi()
     }
 
-    private fun initPermission() {
+    private fun initPermission(isForeground: Boolean) {
         addRxCall(
             RealRxPermission.getInstance(AppController.instance)
                 .requestEach(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.USE_SIP
                 ).all {
@@ -99,7 +100,7 @@ class ConfigurationViewModel(
                 }
                 .subscribe({
                     if (it) {
-                        abtoHelper.initializeAbto()
+                        abtoHelper.initializeAbto(isForeground = isForeground)
                     } else {
                         _sipConnectStatusText.value = "Not Connected, Phone Permission required"
                         toastMessage.value = "Phone Permission required"
@@ -169,14 +170,14 @@ class ConfigurationViewModel(
         } else {
             _unInitializeLabelVisibility.postValue(View.GONE)
             _sipConnectStatusText.value = "service destroyed"
-            _sipInitializeButton.postValue("Save & Initialize")
+            _sipInitializeButton.postValue("Initialize")
         }
     }
 
     private fun initUi() {
         _sipConnectionStatus.postValue(abtoHelper.isAbtoInitialized())
         _sipConnectStatusText.postValue(if (abtoHelper.isAbtoInitialized()) "Registered" else "Registering")
-        _sipInitializeButton.postValue(if (abtoHelper.isAbtoInitialized()) "UnInitialize" else "Save & Initialize")
+        _sipInitializeButton.postValue(if (abtoHelper.isAbtoInitialized()) "UnInitialize" else "Initialize")
         _unInitializeLabelVisibility.postValue(if (abtoHelper.isAbtoInitialized()) View.VISIBLE else View.GONE)
         _signallingTransport.postValue(
             AbtoPhoneCfg.SignalingTransportType.getTypeByValue(
@@ -288,7 +289,17 @@ class ConfigurationViewModel(
             }))
         } else {
             abtoHelper.initializeAbto(isForeground = true)
-
+            initPermission(isForeground = true)
         }
+    }
+
+    fun doConfigurationReset() {
+        if (abtoHelper.isAbtoInitialized()) {
+            toastMessage.postValue("UnInitializing required")
+            return
+        }
+        appSettingsRepository.putCurrentUserSipModel(CurrentUserSipModel())
+        toastMessage.postValue("Configuration resetted, you can initialize now")
+        initUi()
     }
 }

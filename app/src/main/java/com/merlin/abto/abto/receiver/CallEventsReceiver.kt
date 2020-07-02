@@ -12,7 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
 import androidx.core.app.NotificationCompat
-import com.merlin.abto.AppController.Companion.instance
+import com.merlin.abto.core.AppController.Companion.instance
 import com.merlin.abto.R
 import com.merlin.abto.ui.activity.call.CallActivity
 import com.merlin.abto.ui.activity.call.CallActivity.Companion.IS_ATTENDED_CALL
@@ -82,13 +82,11 @@ class CallEventsReceiver : BroadcastReceiver() {
 
         // Intent for launch CallActivity
         intent.putExtra(INCOMING_CALL_NOTIFICATION, notificationId)
-        val notificationPendingIntent =
+        val pendingIntent =
             PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Intent for pickup audio call
         intent.putExtra(IS_ATTENDED_CALL, true)
-        val pickUpAudioPendingIntent =
-            PendingIntent.getActivity(context, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Intent for reject call
         val rejectCallIntent = Intent()
@@ -114,9 +112,9 @@ class CallEventsReceiver : BroadcastReceiver() {
             .setColor(-0xff0100)
             .setAutoCancel(false)
             .setContentTitle(title)
-            .setContentIntent(notificationPendingIntent)
+            .setContentIntent(pendingIntent)
             .setContentText("$dialerName calling..")
-            .setSubText(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) title else "campaignName")
+            .setSubText(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) title else "Incoming ${if (isVideoCall) "Video Call" else "Call"}")
             .setDefaults(Notification.DEFAULT_ALL)
             .setStyle(bigText)
             .setDeleteIntent(pendingRejectCall)
@@ -125,21 +123,15 @@ class CallEventsReceiver : BroadcastReceiver() {
             .setPriority(Notification.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .addAction(R.drawable.ic_notif_cancel_call, "Reject", pendingRejectCall)
-            .addAction(R.drawable.ic_notif_pick_up_audio, "Answer", pickUpAudioPendingIntent)
 
-        if (isVideoCall) {
-            // Intent for pickup video call
-            val pickUpVideoIntent = Intent(context, CallActivity::class.java)
-            pickUpVideoIntent.putExtras(bundle)
-            pickUpVideoIntent.putExtra(KEY_PICK_UP_VIDEO, true)
-            val pickUpVideoPendingIntent = PendingIntent.getActivity(
-                context,
-                3,
-                pickUpVideoIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            builder.addAction(R.drawable.ic_notif_pick_up_video, "Video", pickUpVideoPendingIntent)
-        }
+        builder.addAction(
+            if (isVideoCall) {
+                R.drawable.ic_notif_pick_up_video
+            } else {
+                R.drawable.ic_notif_pick_up_audio
+            }, "Answer", pendingIntent
+        )
+
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification = builder.build()
@@ -157,7 +149,7 @@ class CallEventsReceiver : BroadcastReceiver() {
         fun cancelIncCallNotification(context: Context, callId: Int) {
             val mNotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            mNotificationManager?.cancel(NOTIFICATION_INCOMING_CALL_ID + callId)
+            mNotificationManager.cancel(NOTIFICATION_INCOMING_CALL_ID + callId)
         }
     }
 }

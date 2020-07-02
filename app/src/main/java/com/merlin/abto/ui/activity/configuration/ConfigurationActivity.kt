@@ -11,6 +11,7 @@ import com.merlin.abto.R
 import com.merlin.abto.databinding.LayoutConfigurationBinding
 import com.merlin.abto.extension.obtainViewModel
 import com.support.baseApp.mvvm.MActionBarActivity
+import com.support.dialog.getConfirmationDialog
 import com.support.dialog.getInputDialog
 import com.support.dialog.getListDialog
 import io.reactivex.functions.Predicate
@@ -67,7 +68,15 @@ class ConfigurationActivity :
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_reset_default -> TODO()
+            R.id.menu_reset_default -> {
+                addRxCall(getConfirmationDialog(message = "Sure to reset?").subscribe({
+                    if (it) {
+                        viewModel.doConfigurationReset()
+                    }
+                }, {
+                    it.printStackTrace()
+                }))
+            }
         }
         return super.onOptionsItemSelected(item)
     }

@@ -5,7 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Observer
-import com.merlin.abto.AppController
+import com.merlin.abto.core.AppController
 import com.merlin.abto.R
 import com.merlin.abto.databinding.LayoutCall2Binding
 import com.merlin.abto.extension.obtainViewModel

@@ -39,7 +39,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:hint="merlinJeyakumar@146.142.98.65"
+                        android:hint="merlinJeyakumar@34.67.73.140"
                         android:padding="@dimen/_5sdp"
                         android:text="@{viewmodel.registeredIdLiveData}" />
 
@@ -72,11 +72,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:completionThreshold="1"
-                            android:text="@{viewmodel.sipText}"
                             android:drawableRight="@drawable/mic_on"
                             android:drawableTint="@android:color/transparent"
                             android:imeOptions="actionDone"
-                            android:inputType="textAutoComplete|textWebEmailAddress|textWebEditText" />
+                            android:inputType="textAutoComplete|textWebEmailAddress|textWebEditText"
+                            android:text="@{viewmodel.sipText}" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageButton
@@ -125,18 +125,36 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputLayout
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Send message">
+                    android:layout_height="wrap_content">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edMessage"
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
-                        android:inputType="textAutoComplete" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:hint="Send message">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/mic_on"
+                            android:drawableTint="@android:color/transparent"
+                            android:imeOptions="actionDone"
+                            android:inputType="textAutoComplete"
+                            android:text="@{android.os.Build.MANUFACTURER.concat(` `).concat(android.os.Build.MODEL).concat(` Says Hi..`)}" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end|center"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:background="@android:color/transparent"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:onClick="@{_->edMessage.getText().clear()}"
+                        android:src="@drawable/ic_baseline_backspace_24" />
+                </FrameLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="match_parent"
@@ -172,6 +190,28 @@
                     android:text="@{viewmodel.sipConnectionStatus}" />
 
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/_5sdp"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{_->viewmodel.shareLog()}"
+                android:text="Share Log"
+                android:textSize="@dimen/_8sdp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clearLog"
+                android:text="Clear Log"
+                android:textSize="@dimen/_8sdp" />
         </LinearLayout>
     </FrameLayout>
 </layout>

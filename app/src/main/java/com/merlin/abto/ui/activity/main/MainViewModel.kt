@@ -5,7 +5,7 @@ import android.widget.ArrayAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.data.repositories.AppSettingsRepository
-import com.merlin.abto.AppController
+import com.merlin.abto.core.AppController
 import com.merlin.abto.abto.AbtoHelper
 import com.merlin.abto.abto.rxjava.AbtoRxEvents
 import com.merlin.abto.abto.rxjava.AbtoState
@@ -13,8 +13,10 @@ import com.support.baseApp.mvvm.MBaseViewModel
 import com.support.rxJava.RxBus
 import com.support.rxJava.Scheduler.ui
 import com.support.utills.Log
+import com.support.utills.shareFile
 import com.vanniktech.rxpermission.Permission
 import com.vanniktech.rxpermission.RealRxPermission
+import io.reactivex.schedulers.Schedulers
 import org.abtollc.sdk.AbtoPhoneCfg
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -66,6 +68,8 @@ class MainViewModel(
         addRxCall(
             RealRxPermission.getInstance(AppController.instance)
                 .requestEach(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.USE_SIP
                 ).all {
@@ -247,5 +251,27 @@ class MainViewModel(
                     toastMessage.value = it.localizedMessage
                 })
         )
+    }
+
+    fun shareLog() {
+        addRxCall(
+            abtoHelper.getAbtoLogs()
+                .subscribeOn(Schedulers.io())
+                .observeOn(ui())
+                .subscribe({
+                    getContext().shareFile(it, "s-merlin@mithrai.com")
+                }, {
+//                    Log.e(TAG, it.localizedMessage)
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    fun clearLog() {
+        abtoHelper.getAbtoLogsPath().deleteRecursively()
+    }
+
+    fun setSipAddress(it: String) {
+        _sipText.postValue(it)
     }
 }

@@ -3,6 +3,7 @@ package com.support.utills
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import androidx.core.content.FileProvider
 
@@ -33,20 +34,26 @@ fun Context.shareFile(file: File, emailAddress: String? = null) {
     val intentShareFile = Intent(Intent.ACTION_SEND)
     intentShareFile.type = "application/text" //FIXME : CORRECT THE MIME
     val uri = FileProvider.getUriForFile(
-            this,
-            "${this.packageName}.provider",
-            file)
+        this,
+        "${this.packageName}.provider",
+        file
+    )
     intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
     emailAddress?.let {
         intentShareFile.putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress));
     }
 
     intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "${this.getString(R.string.app_name)} logDump")
-    intentShareFile.putExtra(Intent.EXTRA_TEXT, "Device Name ${android.os.Build.MANUFACTURER + android.os.Build.MODEL}");
+    intentShareFile.putExtra(
+        Intent.EXTRA_TEXT,
+        "Device Name ${android.os.Build.MANUFACTURER + android.os.Build.MODEL}"
+    );
 
 
     //if you need
     //intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Sharing File Subject);
     //intentShareFile.putExtra(Intent.EXTRA_TEXT, "Sharing File Description");
-    startActivity(Intent.createChooser(intentShareFile, "Share File"))
+    startActivity(
+        Intent.createChooser(intentShareFile, "Share File").setFlags(FLAG_ACTIVITY_NEW_TASK)
+    )
 }

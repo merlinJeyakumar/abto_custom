@@ -1,6 +1,7 @@
 package com.data.repositories
 
 import android.content.Context
+import android.os.Environment
 import androidx.annotation.VisibleForTesting
 import com.data.utils.BaseLiveSharedPreferences
 import com.domain.datasources.IAppSettingsDataSource
@@ -8,6 +9,8 @@ import com.domain.models.CurrentUserSipModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.support.shared_pref.Prefs
+import io.reactivex.Single
+import java.io.File
 
 
 class AppSettingsRepository(

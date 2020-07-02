@@ -6,7 +6,7 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.data.repositories.AppSettingsRepository
-import com.merlin.abto.AppController
+import com.merlin.abto.core.AppController
 import com.merlin.abto.R
 import com.merlin.abto.abto.AbtoHelper
 import com.merlin.abto.abto.rxjava.AbtoRxEvents

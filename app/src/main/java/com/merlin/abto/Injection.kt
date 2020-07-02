@@ -12,6 +12,7 @@ import com.domain.datasources.remote.IRestDataSource
 import com.merlin.abto.data.RestService
 import com.google.gson.Gson
 import com.merlin.abto.abto.AbtoHelper
+import com.merlin.abto.core.AppController
 
 object Injection {
 

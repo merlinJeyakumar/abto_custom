@@ -1,15 +1,19 @@
 package com.merlin.abto.abto
 
+import android.os.Environment
 import android.os.RemoteException
 import android.view.SurfaceView
 import com.data.repositories.AppSettingsRepository
 import com.domain.datasources.IAbtoHandler
-import com.merlin.abto.AppController
-import com.merlin.abto.AppController.Companion.instance
+import com.merlin.abto.core.AppController
+import com.merlin.abto.core.AppController.Companion.instance
 import com.merlin.abto.R
 import com.merlin.abto.abto.rxjava.*
+import com.support.dateClass.DateUtils.getTodayDateTime
 import com.support.rxJava.RxBus
 import com.support.utills.Log
+import com.support.utills.Log.shareLogDirFile
+import com.support.utills.ZipManager
 import io.reactivex.Completable
 import io.reactivex.Single
 import org.abtollc.api.SipCallSession.StatusCode.*
@@ -271,10 +275,10 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
 
     private fun initAbtoConfiguration() {
         val config = abtoPhone.config
-        config.setCodecPriority(Codec.G729, 0.toShort())
-        config.setCodecPriority(Codec.GSM, 0.toShort())
-        config.setCodecPriority(Codec.PCMU, 200.toShort())
-        config.setCodecPriority(Codec.PCMA, 100.toShort())
+        for (c in Codec.values()) config.setCodecPriority(c, 0.toShort())
+        config.setCodecPriority(Codec.G729, 81.toShort())
+        config.setCodecPriority(Codec.PCMA, 80.toShort())
+        config.setCodecPriority(Codec.PCMU, 79.toShort())
         config.setCodecPriority(Codec.H264, 220.toShort())
         config.setCodecPriority(Codec.H263_1998, 210.toShort())
 
@@ -305,16 +309,15 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         config.isTLSVerifyServer = appSettingsRepository.getCurrentUserSipModel().verifyTLSServer;
         config.registerTimeout = appSettingsRepository.getCurrentUserSipModel().registerTimeout
         config.hangupTimeout = appSettingsRepository.getCurrentUserSipModel().hangupTimeout
+        config.inviteTimeout = appSettingsRepository.getCurrentUserSipModel().inviteTimeout
         config.dtmFmode = AbtoPhoneCfg.DTMF_MODE.INFO
 
-        config.isUseSRTP = false
         config.setEnableAutoSendRtpVideo(appSettingsRepository.getCurrentUserSipModel().autoSendRtpVideo)
         config.setEnableAutoSendRtpAudio(appSettingsRepository.getCurrentUserSipModel().autoSendRtpAudio)
         config.userAgent = this.abtoPhone.version()
         config.sipPort = appSettingsRepository.getCurrentUserSipModel().sipPort
         config.rtpPort = appSettingsRepository.getCurrentUserSipModel().rtpPort
         AbtoPhoneCfg.setLogLevel(7, true)
-        config.isMwiEnabled = true
     }
 
     override fun sendMessage(receiverId: String, message: String): Completable {
@@ -355,11 +358,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
     override fun hangupCall(callId: Int): Completable {
         return Completable.create {
             if (abtoPhone.config.isConnectivityValid) {
-                if (abtoPhone.isIncomingCall(callId)) {
-                    abtoPhone.rejectCall(callId)
-                } else {
-                    abtoPhone.rejectCall(callId)
-                }
+                abtoPhone.hangUp(callId)
             } else {
                 error(instance.getString(R.string.internet_connection_is_not_valid))
             }
@@ -504,6 +503,24 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                 )
             )
             isDestroyed = true
+        }
+    }
+
+    fun getAbtoLogs(): Single<File> {
+        return Single.create<File> {
+            val zipManager = ZipManager()
+            zipManager.dirChecker(getAbtoLogsPath().absolutePath)
+            val fileList =
+                mutableListOf<File>().apply { addAll(getAbtoLogsPath().listFiles()!!.toList()) }
+            val zipFile = File(instance.shareLogDirFile(), "abtoLogs_${getTodayDateTime()}.zip")
+            zipManager.zip(fileList, zipFile)
+            it.onSuccess(zipFile)
+        }
+    }
+
+    fun getAbtoLogsPath(): File {
+        return File("${Environment.getExternalStorageDirectory()?.absolutePath}${File.separator}${instance.packageName}/logs").apply {
+            this.mkdirs()
         }
     }
 }

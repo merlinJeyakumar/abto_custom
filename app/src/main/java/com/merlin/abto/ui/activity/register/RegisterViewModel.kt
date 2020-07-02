@@ -3,7 +3,7 @@ package com.merlin.abto.ui.activity.register
 import android.Manifest
 import androidx.lifecycle.MutableLiveData
 import com.data.repositories.AppSettingsRepository
-import com.merlin.abto.AppController
+import com.merlin.abto.core.AppController
 import com.merlin.abto.R
 import com.merlin.abto.abto.AbtoHelper
 import com.merlin.abto.abto.rxjava.AbtoRxEvents
@@ -41,6 +41,10 @@ class RegisterViewModel(
     val sipDomain: MutableLiveData<String>
         get() = _sipDomain
 
+    private val _sipConnectionStatus = MutableLiveData<String>()
+    val sipConnectionStatus: MutableLiveData<String>
+        get() = _sipConnectionStatus
+
 
     override fun subscribe() {
         prepareSipList()
@@ -56,37 +60,40 @@ class RegisterViewModel(
                 when (it.abtoState) {
                     INITIALIZING -> {
                         showProgress.value = true
-                        toastMessage.value = "initializing"
+                        sipConnectionStatus.value = "initializing"
                         Log.e(TAG, "setupObserver initializing")
                     }
                     INITIALIZED -> {
                         //TODO:
-                        toastMessage.value = "initialized"
+                        sipConnectionStatus.value = "initialized"
                         Log.e(TAG, "setupObserver initialized")
                     }
                     INITIALIZATION_FAILED -> {
                         showProgress.value = false
                         it.throwable?.printStackTrace()
-                        toastMessage.value = "initializing failed ${it.throwable?.localizedMessage}"
+                        sipConnectionStatus.value =
+                            "initializing failed ${it.throwable?.localizedMessage}"
                         Log.e(TAG, "setupObserver initializing failed")
                     }
                     REGISTERING -> {
-                        toastMessage.value = "Registering"
+                        sipConnectionStatus.value = "Registering"
                         Log.e(TAG, "setupObserver Registering")
                     }
                     REGISTERED -> {
                         showProgress.value = false
-                        toastMessage.value = "Registered"
+                        sipConnectionStatus.value = "Registered"
                         Log.e(TAG, "setupObserver Registered")
                         _registerLiveData.value = Unit
                     }
                     REGISTERING_FAILED -> {
                         showProgress.value = false
                         it.throwable?.printStackTrace()
-                        toastMessage.value = "registering failed ${it.throwable?.localizedMessage}"
+                        sipConnectionStatus.value =
+                            "registering failed ${it.throwable?.localizedMessage}"
                     }
                     UNREGISTERED -> {
                         Log.e(TAG, "setupObserver UNREGISTERED3")
+                        sipConnectionStatus.value = "unregistered"
                     }
                 }
             })
@@ -149,6 +156,8 @@ class RegisterViewModel(
         addRxCall(
             RealRxPermission.getInstance(AppController.instance)
                 .requestEach(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.USE_SIP,
                     Manifest.permission.READ_PHONE_STATE
                 )
