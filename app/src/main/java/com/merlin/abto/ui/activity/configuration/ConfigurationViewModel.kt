@@ -78,6 +78,10 @@ class ConfigurationViewModel(
     val hangupTimeout: LiveData<String>
         get() = _hangupTimeout
 
+    private val _inviteTimeout = MutableLiveData<String>()
+    val inviteTimeout: LiveData<String>
+        get() = _inviteTimeout
+
     private val _verifyTlsServer = MutableLiveData<String>()
     val verifyTlsServer: LiveData<String>
         get() = _verifyTlsServer
@@ -193,6 +197,7 @@ class ConfigurationViewModel(
         _autoSendRtpAudio.postValue(appSettingsRepository.getCurrentUserSipModel().autoSendRtpAudio)
         _autoSendRtpVideo.postValue(appSettingsRepository.getCurrentUserSipModel().autoSendRtpVideo)
         _registerTimeout.postValue(appSettingsRepository.getCurrentUserSipModel().registerTimeout.toString())
+        _inviteTimeout.postValue(appSettingsRepository.getCurrentUserSipModel().inviteTimeout.toString())
         _hangupTimeout.postValue(appSettingsRepository.getCurrentUserSipModel().hangupTimeout.toString())
         _verifyTlsServer.postValue(appSettingsRepository.getCurrentUserSipModel().verifyTLSServer.toString())
     }
@@ -271,6 +276,14 @@ class ConfigurationViewModel(
         appSettingsRepository.putCurrentUserSipModel(
             appSettingsRepository.getCurrentUserSipModel().apply {
                 this.hangupTimeout = hangupTimeout
+            })
+        initUi()
+    }
+
+    fun setInviteTimeout(inviteTimeout: Int) {
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.inviteTimeout = inviteTimeout
             })
         initUi()
     }

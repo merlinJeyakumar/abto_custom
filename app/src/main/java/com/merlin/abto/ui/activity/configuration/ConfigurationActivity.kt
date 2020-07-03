@@ -315,6 +315,31 @@ class ConfigurationActivity :
         )
     }
 
+    fun onInviteTimeout(view: View) {
+        addRxCall(getInputDialog(
+            title = "Invite Timeout",
+            inputType = InputType.TYPE_CLASS_NUMBER,
+            defaultText = viewModel.getCurrentSipModel().inviteTimeout.toString()
+        ).map {
+            if (it.isPositive) {
+                if (it.input.isEmpty() || (it.input.toInt() <= 0)) {
+                    error("input not valid")
+                } else {
+                    viewModel.setInviteTimeout(it.input.toInt())
+                }
+            }
+        }
+            .retry(Predicate {
+                return@Predicate true
+            })
+            .subscribe({
+            }, {
+                toast(it.localizedMessage)
+                it.printStackTrace()
+            })
+        )
+    }
+
     fun onVerifyTlsServer(view: View) {
         addRxCall(getListDialog(
             title = "Verify TLS Server", listString = listOf(
