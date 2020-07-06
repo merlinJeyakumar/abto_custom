@@ -22,8 +22,9 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
     private val TAG: String = AbtoHelper::class.java.simpleName
     private var abtoPhone: AbtoPhone = instance.abtoPhone
     private var isDestroyed: Boolean = false
-    private var RETRY_TIME: Int = 3
-    private var RegisterRetries = 0 //NOOP - Success, AboveFailLimit
+    private var retryTime: Int = 3
+    private var registerRetries = 0 //NOOP - Success, AboveFailLimit
+    private var activeCallMap = mutableMapOf<String, Int>()
 
     companion object {
         private var INSTANCE: AbtoHelper? = null
@@ -103,7 +104,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         errorCode = accId
                     )
                 )
-                RegisterRetries = 0
+                registerRetries = 0
             }
 
             override fun onUnRegistered(accId: Long) {
@@ -116,7 +117,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         abtoState = AbtoState.UNREGISTERED
                     )
                 )
-                RegisterRetries = 0
+                registerRetries = 0
             }
 
             override fun onRegistrationFailed(accId: Long, errorCode: Int, errorMessage: String) {
@@ -129,16 +130,17 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         throwable = Exception(errorMessage)
                     )
                 )
-                if (!isForeground && !isDestroyed && RegisterRetries < RETRY_TIME) {
+                if (!isForeground && !isDestroyed && registerRetries < retryTime) {
                     initializeAbto()
-                    RegisterRetries++
+                    registerRetries++
                 } else {
-                    RegisterRetries = 0
+                    registerRetries = 0
                 }
             }
         })
 
         abtoPhone.setCallConnectedListener { callId, remoteContact ->
+            activeCallMap[remoteContact] = callId
             RxBus.publish(
                 AbtoRxEvents.CallConnectionChanged(
                     state = CallState.CONNECTED,
@@ -150,6 +152,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         }
 
         abtoPhone.setCallDisconnectedListener { callId, remoteContact, errorCode, errorMessage ->
+            activeCallMap.remove(remoteContact)
             RxBus.publish(
                 AbtoRxEvents.CallConnectionChanged(
                     state = CallState.DISCONNECTED,
@@ -444,7 +447,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         abtoState = AbtoState.UNREGISTERED
                     )
                 )
-                RegisterRetries = 0
+                registerRetries = 0
             }
         }
     }
@@ -500,6 +503,13 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                 )
             )
             isDestroyed = true
+        }
+    }
+
+    override fun mergeCurrentCalls(): Completable {
+        //NOOP
+        return Completable.create {
+            abtoPhone.joinAllCallsToConf()
         }
     }
 }

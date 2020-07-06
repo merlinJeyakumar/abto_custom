@@ -355,4 +355,11 @@ class CallViewModel(
         svLocalVideo.setZOrderOnTop(true)
         svLocalVideo.setZOrderMediaOverlay(true)
     }
+
+    fun onAddPerson() {
+        //NOOP
+        if (abtoHelper.isActiveCall(activeCallId)) {
+            addRxCall(abtoHelper.dialCall("test4@34.67.73.140", true).subscribe({}, { it.printStackTrace() }))
+        }
+    }
 }

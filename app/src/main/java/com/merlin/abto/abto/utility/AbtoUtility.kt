@@ -16,6 +16,8 @@ import com.support.utills.ZipManager
 import io.reactivex.Single
 import java.io.File
 
+var FOREGROUND_NOTIFICATION_CHANNEL_ID = "Call Service"
+
 fun getSipProps(text: String): MutableList<String> {
     val sipIdDomain = text.split(";")[0]
     val sipPassword = text.split(";")[1]
@@ -31,11 +33,11 @@ fun getSipProps(text: String): MutableList<String> {
 }
 
 fun Context.getForegroundNotification(): Notification? {
-    val channelId = "SIP Call Service"
+    val channelId = FOREGROUND_NOTIFICATION_CHANNEL_ID
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val notificationChannel = NotificationChannel(
             channelId,
-            "Voice Call Service",
+            FOREGROUND_NOTIFICATION_CHANNEL_ID,
             NotificationManager.IMPORTANCE_NONE
         )
         notificationChannel.lightColor = Color.BLUE

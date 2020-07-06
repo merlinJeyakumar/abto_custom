@@ -17,15 +17,15 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:animateLayoutChanges="true"
             android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
             android:background="@drawable/call_gradient">
 
             <FrameLayout
-                android:animateLayoutChanges="true"
                 android:id="@+id/frameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
                 <SurfaceView
@@ -42,11 +42,27 @@
                     android:visibility="gone" />
             </FrameLayout>
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end"
+                android:contentDescription="Add Person"
+                android:onClick="@{_->viewmodel.onAddPerson()}"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_baseline_person_add_24"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.90"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/frameLayout"
+                app:tint="@android:color/white" />
+
+
             <LinearLayout
-                android:animateLayoutChanges="true"
                 android:id="@+id/linearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -99,10 +115,10 @@
             </LinearLayout>
 
             <LinearLayout
-                android:animateLayoutChanges="true"
                 android:id="@+id/oncallLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="@{viewmodel.ongoingCallLayoutVisibility,default=gone}"
@@ -110,20 +126,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
                 <LinearLayout
-                    android:animateLayoutChanges="true"
                     android:id="@+id/onCallOptionMenu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|center"
                     android:layout_marginBottom="@dimen/_30sdp"
+                    android:animateLayoutChanges="true"
                     android:orientation="horizontal"
                     android:visibility="@{viewmodel.onCallOptions}">
 
                     <LinearLayout
-                        android:animateLayoutChanges="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/_10sdp"
+                        android:animateLayoutChanges="true"
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.AppCompatImageButton
@@ -150,10 +166,10 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:animateLayoutChanges="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/_10sdp"
+                        android:animateLayoutChanges="true"
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.AppCompatImageButton
@@ -181,10 +197,10 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:animateLayoutChanges="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/_10sdp"
+                        android:animateLayoutChanges="true"
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.AppCompatImageButton
@@ -214,10 +230,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:animateLayoutChanges="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_10sdp"
+                    android:animateLayoutChanges="true"
                     android:orientation="vertical">
 
                     <ImageButton
@@ -245,10 +261,10 @@
             </LinearLayout>
 
             <LinearLayout
-                android:animateLayoutChanges="true"
                 android:id="@+id/incomingButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:orientation="horizontal"
                 android:visibility="@{viewmodel.incomingCallLayoutVisibility,default=gone}"
                 app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
@@ -258,12 +274,12 @@
                 app:layout_constraintVertical_bias="0.8">
 
                 <LinearLayout
-                    android:animateLayoutChanges="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_10sdp"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="1"
+                    android:animateLayoutChanges="true"
                     android:gravity="center"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -294,13 +310,13 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:animateLayoutChanges="true"
                     android:id="@+id/linearLayout2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_10sdp"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="1"
+                    android:animateLayoutChanges="true"
                     android:gravity="center"
                     android:orientation="vertical">
 

@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
 import com.merlin.abto.R
@@ -26,13 +25,12 @@ import com.support.dialog.getConfirmationDialog
 import com.support.rxJava.RxBus
 import com.support.rxJava.Scheduler.ui
 import kotlinx.android.synthetic.main.layout_main.*
-import org.jetbrains.anko.toast
 import kotlin.math.abs
 import kotlin.random.Random
 
 class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
     private var menu_refresh: MenuItem? = null
-    private var MESSAGE_NOTIFICATION_CHANNEL = "Incoming message"
+    private var MESSAGE_NOTIFICATION_CHANNEL = "MESSAGE_NOTIFICATION_CHANNEL"
     private var INCOMING_SIP_IDENTITY = "INCOMING_SIP_IDENTITY"
 
     override fun getLayoutId(): Int {
