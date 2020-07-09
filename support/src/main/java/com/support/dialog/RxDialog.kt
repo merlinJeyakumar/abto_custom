@@ -1,7 +1,6 @@
 package com.support.dialog
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,7 +13,7 @@ import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mithrai.crowdai.Abstract.View.ProgressDiag
+import com.support.widgets.CustomDialog.ProgressDiag
 import com.support.R
 import com.support.utills.ViewUtils
 import io.reactivex.Single

@@ -1,4 +1,4 @@
-package com.mithrai.crowdai.Abstract.View
+package com.support.widgets.CustomDialog
 
 import android.app.Activity
 import android.app.ProgressDialog
