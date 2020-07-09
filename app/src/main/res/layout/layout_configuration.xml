@@ -184,7 +184,7 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:foreground="?attr/selectableItemBackground"
-                        android:onClick="onHangupTimeout"
+                        android:onClick="onInviteTimeout"
                         android:orientation="vertical"
                         android:padding="@dimen/_10sdp">
 
