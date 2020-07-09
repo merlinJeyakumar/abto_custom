@@ -7,6 +7,7 @@ import com.domain.datasources.IAbtoHandler
 import com.merlin.abto.R
 import com.merlin.abto.abto.rxjava.*
 import com.merlin.abto.abto.utility.getForegroundNotification
+import com.merlin.abto.abto.utility.getSipRemoteAddress
 import com.merlin.abto.core.AppController
 import com.merlin.abto.core.AppController.Companion.instance
 import com.support.rxJava.RxBus
@@ -140,7 +141,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         })
 
         abtoPhone.setCallConnectedListener { callId, remoteContact ->
-            activeCallMap[remoteContact] = callId
+            activeCallMap[getSipRemoteAddress(remoteContact)] = callId
             RxBus.publish(
                 AbtoRxEvents.CallConnectionChanged(
                     state = CallState.CONNECTED,
@@ -152,7 +153,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         }
 
         abtoPhone.setCallDisconnectedListener { callId, remoteContact, errorCode, errorMessage ->
-            activeCallMap.remove(remoteContact)
+            activeCallMap.remove(getSipRemoteAddress(remoteContact))
             RxBus.publish(
                 AbtoRxEvents.CallConnectionChanged(
                     state = CallState.DISCONNECTED,
@@ -348,6 +349,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         state = CallState.CONNECTING
                     )
                 )
+                activeCallMap[getSipRemoteAddress(receiverId)] = callId
                 it.onSuccess(callId)
             } else {
                 error(instance.getString(R.string.internet_connection_is_not_valid))
@@ -355,10 +357,11 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         }
     }
 
-    override fun hangupCall(callId: Int): Completable {
-        return Completable.create {
+    override fun hangupCall(callId: Int): Single<Unit> {
+        return Single.create {
             if (abtoPhone.config.isConnectivityValid) {
                 abtoPhone.hangUp(callId)
+                it.onSuccess(Unit)
             } else {
                 error(instance.getString(R.string.internet_connection_is_not_valid))
             }
@@ -486,6 +489,16 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
         return abtoPhone.isActiveCall(callId)
     }
 
+    override fun isCallProcessing(): Boolean {
+        return activeCallMap.isNotEmpty().also {
+            if (it) {
+                for (mutableEntry in activeCallMap) {
+                    abtoPhone.hangUp(mutableEntry.value)
+                }
+            }
+        }
+    }
+
     fun getAbtoConfiguration(): AbtoPhoneCfg {
         return abtoPhone.config
     }
@@ -512,4 +525,5 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
             abtoPhone.joinAllCallsToConf()
         }
     }
+
 }

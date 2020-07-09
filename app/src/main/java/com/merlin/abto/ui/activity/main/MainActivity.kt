@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
 import com.merlin.abto.R
 import com.merlin.abto.abto.rxjava.AbtoRxEvents
+import com.merlin.abto.abto.utility.getSipRemoteAddress
 import com.merlin.abto.databinding.LayoutMainBinding
 import com.merlin.abto.extension.obtainViewModel
 import com.merlin.abto.ui.activity.call.CallActivity
@@ -155,9 +156,9 @@ class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+        super.onNewIntent(intent) //FIXME: NOT RECEIVING CORRECT VALUE FROM NOTIFICATION BUILDER
         overridePendingTransition(0, 0)
-        intent?.getStringExtra(INCOMING_SIP_IDENTITY)?.replace("<", "")?.replace(">", "")?.let {
+        getSipRemoteAddress(intent?.extras?.getString(INCOMING_SIP_IDENTITY)!!).let {
             viewModel.setSipAddress(
                 it
             )

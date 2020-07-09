@@ -264,7 +264,11 @@ class CallViewModel(
     }
 
     fun doHangup() {
-        addRxCall(abtoHelper.hangupCall(activeCallId).subscribe({}, {
+        addRxCall(abtoHelper.hangupCall(activeCallId).subscribe({
+            if (appSettingsRepository.getCurrentUserSipModel().activityFinishHangup) {
+                _callConnectDisconnect.postValue(false)
+            }
+        }, {
             it.printStackTrace()
             Log.e(TAG, it.localizedMessage)
         }))
@@ -359,7 +363,10 @@ class CallViewModel(
     fun onAddPerson() {
         //NOOP
         if (abtoHelper.isActiveCall(activeCallId)) {
-            addRxCall(abtoHelper.dialCall("test4@34.67.73.140", true).subscribe({}, { it.printStackTrace() }))
+            addRxCall(
+                abtoHelper.dialCall("test4@34.67.73.140", true)
+                    .subscribe({}, { it.printStackTrace() })
+            )
         }
     }
 }

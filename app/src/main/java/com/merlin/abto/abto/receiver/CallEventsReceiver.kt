@@ -11,6 +11,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.merlin.abto.core.AppController.Companion.instance
 import com.merlin.abto.R
@@ -25,6 +26,8 @@ class CallEventsReceiver : BroadcastReceiver() {
     private val TAG: String = this.javaClass.simpleName
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.e(TAG, "CallEventReceiver: ${intent.extras?.getInt(AbtoPhone.CODE)}")
+
         val bundle = intent.extras ?: return
         if (bundle.getBoolean(AbtoPhone.IS_INCOMING, false)) {
 
@@ -61,7 +64,8 @@ class CallEventsReceiver : BroadcastReceiver() {
             return
         }
         val isVideoCall = bundle.getBoolean(AbtoPhone.HAS_VIDEO, false)
-        val title = if (isVideoCall) "Incoming video call" else "Incoming call"
+        val title =
+            if (isVideoCall) "Incoming call" else "Incoming call" //FIXME: DETERMINE_VIDEO_OR_VOICE_CALL
         val remoteContact = bundle.getString(AbtoPhone.REMOTE_CONTACT)
         val callId = bundle.getInt(AbtoPhone.CALL_ID)
         val notificationId = NOTIFICATION_INCOMING_CALL_ID + callId

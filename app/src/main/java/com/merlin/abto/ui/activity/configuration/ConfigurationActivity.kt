@@ -362,6 +362,28 @@ class ConfigurationActivity :
         )
     }
 
+    fun onActivityFinishHangup(view: View) {
+        addRxCall(getListDialog(
+            title = "ActivityFinishHangup", listString = listOf(
+                true.toString(),
+                false.toString()
+            )
+        ).map {
+            if (it.boolean) {
+                viewModel.setActivityFinishHangup(it.selectedItem?.contentEquals(true.toString())!!)
+            }
+            return@map it.boolean
+        }.subscribe({
+            if (it) {
+                toast("Abto service restart required")
+            }
+        }, {
+            toast(it.localizedMessage)
+            it.printStackTrace()
+        })
+        )
+    }
+
     private fun disableEnableControls(enable: Boolean, vg: ViewGroup) {
         for (i in 0 until vg.getChildCount()) {
             val child: View = vg.getChildAt(i)

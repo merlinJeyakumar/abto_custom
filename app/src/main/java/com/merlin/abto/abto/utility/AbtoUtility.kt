@@ -32,6 +32,9 @@ fun getSipProps(text: String): MutableList<String> {
     }
 }
 
+fun getSipRemoteAddress(remoteAddress:String): String {
+    return remoteAddress.replace("sip:","").replace("<","").replace(">","")
+}
 fun Context.getForegroundNotification(): Notification? {
     val channelId = FOREGROUND_NOTIFICATION_CHANNEL_ID
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

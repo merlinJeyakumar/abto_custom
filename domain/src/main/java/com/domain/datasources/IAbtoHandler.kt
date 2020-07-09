@@ -8,7 +8,7 @@ import java.io.File
 interface IAbtoHandler {
     fun sendMessage(receiverId: String, message: String): Completable
     fun dialCall(receiverId: String, isVideoCall: Boolean): Single<Int>
-    fun hangupCall(callId: Int): Completable
+    fun hangupCall(callId: Int): Single<Unit>
     fun holdCall(callId: Int): Completable
     fun answerCall(callId: Int, isVideoCall: Boolean): Completable
     fun setVideoView(
@@ -28,6 +28,7 @@ interface IAbtoHandler {
     fun isAbtoAccountAdded(): Boolean
     fun isAbtoInitialized(): Boolean
     fun isActiveCall(callId: Int): Boolean
+    fun isCallProcessing(): Boolean
     fun destroyAbtoService(): Completable
     fun mergeCurrentCalls(): Completable
 }

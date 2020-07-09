@@ -86,6 +86,10 @@ class ConfigurationViewModel(
     val verifyTlsServer: LiveData<String>
         get() = _verifyTlsServer
 
+    private val _activityFinishHangup = MutableLiveData<String>()
+    val activityFinishHangup: LiveData<String>
+        get() = _activityFinishHangup
+
     override fun subscribe() {
         setupObserver()
         initUi()
@@ -200,6 +204,7 @@ class ConfigurationViewModel(
         _inviteTimeout.postValue(appSettingsRepository.getCurrentUserSipModel().inviteTimeout.toString())
         _hangupTimeout.postValue(appSettingsRepository.getCurrentUserSipModel().hangupTimeout.toString())
         _verifyTlsServer.postValue(appSettingsRepository.getCurrentUserSipModel().verifyTLSServer.toString())
+        _activityFinishHangup.postValue(appSettingsRepository.getCurrentUserSipModel().activityFinishHangup.toString())
     }
 
     fun getCurrentSipModel(): CurrentUserSipModel {
@@ -292,6 +297,14 @@ class ConfigurationViewModel(
         appSettingsRepository.putCurrentUserSipModel(
             appSettingsRepository.getCurrentUserSipModel().apply {
                 this.verifyTLSServer = verifyTlsServer
+            })
+        initUi()
+    }
+
+    fun setActivityFinishHangup(activityFinishHangup: Boolean) {
+        appSettingsRepository.putCurrentUserSipModel(
+            appSettingsRepository.getCurrentUserSipModel().apply {
+                this.activityFinishHangup = activityFinishHangup
             })
         initUi()
     }

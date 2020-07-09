@@ -21,8 +21,6 @@ import com.vanniktech.rxpermission.Permission
 import com.vanniktech.rxpermission.RealRxPermission
 import io.reactivex.schedulers.Schedulers
 import org.abtollc.sdk.AbtoPhoneCfg
-import java.io.UnsupportedEncodingException
-import java.net.URLEncoder
 
 class MainViewModel(
     private val appSettingsRepository: AppSettingsRepository,
@@ -206,7 +204,11 @@ class MainViewModel(
         Log.e(TAG, "SipAddress $sipAddress")
 
         if (abtoHelper.isAbtoRegistered()) {
-            _connectCall.value = Pair(sipAddress, isVideoCall)
+            if (abtoHelper.isCallProcessing()) {
+                toastMessage.value = "Wait until call disconnection"
+            } else {
+                _connectCall.value = Pair(sipAddress, isVideoCall)
+            }
         } else {
             toastMessage.value = "abto registration not available"
         }
@@ -221,7 +223,7 @@ class MainViewModel(
             buildString.append(appSettingsRepository.getCurrentUserSipModel().sipDomain)
         }
         addSipToCompletionList(buildString.toString())
-        try {
+        /*try {
             buildString.append("?")
             buildString.append("header1=")
             buildString.append(URLEncoder.encode("qq<q>q", "UTF-8")) //value of 'header1'
@@ -229,7 +231,7 @@ class MainViewModel(
             buildString.append("header2=")
             buildString.append(URLEncoder.encode("a@b", "UTF-8")) //value of 'header2'
         } catch (e: UnsupportedEncodingException) {
-        }
+        }*/
         return buildString.toString()
     }
 
