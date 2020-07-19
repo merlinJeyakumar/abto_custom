@@ -51,6 +51,8 @@ enum class AbtoState {
 enum class CallState {
     CONNECTING,
     CONNECTED,
+    RECONNECTING,
+    RECONNECTED,
     DISCONNECTED,
     LOCAL_HOLD,
     REMOTE_HOLD,

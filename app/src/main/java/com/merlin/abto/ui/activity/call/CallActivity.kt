@@ -7,17 +7,16 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.merlin.abto.core.AppController
 import com.merlin.abto.R
-import com.merlin.abto.databinding.LayoutCall2Binding
+import com.merlin.abto.databinding.LayoutCallBinding
 import com.merlin.abto.extension.obtainViewModel
 import com.support.baseApp.mvvm.MBaseActivity
-import com.support.utills.Log
 import com.vanniktech.rxpermission.Permission
 import com.vanniktech.rxpermission.RealRxPermission
-import kotlinx.android.synthetic.main.layout_call_2.*
+import kotlinx.android.synthetic.main.layout_call.*
 import org.abtollc.sdk.AbtoPhone
 import org.jetbrains.anko.toast
 
-class CallActivity : MBaseActivity<LayoutCall2Binding, CallViewModel>() {
+class CallActivity : MBaseActivity<LayoutCallBinding, CallViewModel>() {
 
     private var TAG: String = CallActivity::class.java.simpleName
     private var intentIsIncomingCall: Boolean = false
@@ -65,7 +64,7 @@ class CallActivity : MBaseActivity<LayoutCall2Binding, CallViewModel>() {
     }
 
     override fun getBaseLayoutId(): Int {
-        return R.layout.layout_call_2
+        return R.layout.layout_call
     }
 
     override fun setUpChildUI(savedInstanceState: Bundle?) {

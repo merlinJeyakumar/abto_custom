@@ -199,6 +199,16 @@ class CallViewModel(
                             _callConnectDisconnect.postValue(false)
                             showDisconnected()
                         }
+                        CallState.RECONNECTING -> {
+                            activeCallId = it.callId.toInt()
+                            Log.e(TAG, "setupObserver RECONNECTING ${it.callId}")
+                            showReconnecting()
+                        }
+                        CallState.RECONNECTED -> {
+                            activeCallId = it.callId.toInt()
+                            Log.e(TAG, "setupObserver RECONNECTED ${it.callId}")
+                            showTimer()
+                        }
                         CallState.ERROR -> {
                             activeCallId = it.callId.toInt()
                             _connectionStatus.postValue("Call on error ${it.errorCode}")
@@ -335,6 +345,12 @@ class CallViewModel(
         _endButtonBackground.postValue(getContext().resources.getDrawable(R.drawable.circle_drawable_grey))
         _endButtonDrawable.postValue(getContext().resources.getDrawable(R.drawable.ic_baseline_close_35))
         _endButtonText.postValue("Close")
+    }
+
+    private fun showReconnecting() {
+        countDownTimerDisposable?.dispose()
+        countDownTimerDisposable = null
+        _connectionStatus.postValue("Reconnecting..")
     }
 
     private fun switchScreen(screenId: Int = INCOMING_CALL_SCREEN) {

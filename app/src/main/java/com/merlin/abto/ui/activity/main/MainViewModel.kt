@@ -204,7 +204,7 @@ class MainViewModel(
         Log.e(TAG, "SipAddress $sipAddress")
 
         if (abtoHelper.isAbtoRegistered()) {
-            if (abtoHelper.isCallProcessing()) {
+            if (false && abtoHelper.isCallProcessing()) { //TODO : UNWRAP THIS
                 toastMessage.value = "Wait until call disconnection"
             } else {
                 _connectCall.value = Pair(sipAddress, isVideoCall)

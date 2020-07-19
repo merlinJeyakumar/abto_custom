@@ -11,15 +11,25 @@ import com.merlin.abto.abto.utility.getSipRemoteAddress
 import com.merlin.abto.core.AppController
 import com.merlin.abto.core.AppController.Companion.instance
 import com.support.rxJava.RxBus
+import com.support.rxJava.Scheduler.io
 import com.support.utills.Log
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import org.abtollc.api.AbtoPhoneMediaQuality
 import org.abtollc.api.SipCallSession.StatusCode.*
 import org.abtollc.sdk.*
 import org.abtollc.utils.codec.Codec
 import java.io.File
+import java.util.concurrent.TimeUnit
+
 
 class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAbtoHandler {
+    private var isReconnecting: Boolean = false
+    private var observable: Disposable? = null
+    private var prevRxCount: Long = 0
     private val TAG: String = AbtoHelper::class.java.simpleName
     private var abtoPhone: AbtoPhone = instance.abtoPhone
     private var isDestroyed: Boolean = false
@@ -139,12 +149,37 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                 }
             }
         })
-
         abtoPhone.setCallConnectedListener { callId, remoteContact ->
             activeCallMap[getSipRemoteAddress(remoteContact)] = callId
+            observable = Observable.interval(3000, 3000, TimeUnit.MILLISECONDS)
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    val counters: AbtoPhoneMediaQuality =
+                        abtoPhone.readCallMediaQuality(callId, false)
+                    val newRxCount = counters.rxPackets
+                    if ((newRxCount - prevRxCount) == 0L) {
+                        RxBus.publish(
+                            AbtoRxEvents.CallConnectionChanged(
+                                state = CallState.RECONNECTING
+                            )
+                        )
+                        isReconnecting = true
+                    } else {
+                        prevRxCount = newRxCount;
+                        if (isReconnecting) {
+                            RxBus.publish(
+                                AbtoRxEvents.CallConnectionChanged(
+                                    state = CallState.RECONNECTED
+                                )
+                            )
+                        }
+                        isReconnecting = false
+                    }
+                }
             RxBus.publish(
                 AbtoRxEvents.CallConnectionChanged(
-                    state = CallState.CONNECTED,
+                    state = CallState.RECONNECTED,
                     callId = callId.toLong(),
                     errorCode = 200,
                     remoteContact = remoteContact
@@ -154,6 +189,8 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
 
         abtoPhone.setCallDisconnectedListener { callId, remoteContact, errorCode, errorMessage ->
             activeCallMap.remove(getSipRemoteAddress(remoteContact))
+            observable?.dispose()
+            observable = null
             RxBus.publish(
                 AbtoRxEvents.CallConnectionChanged(
                     state = CallState.DISCONNECTED,
