@@ -16,6 +16,6 @@ data class CurrentUserSipModel(
     var inviteTimeout: Int = 3000,
     var autoSendRtpVideo: Boolean = true,
     var autoSendRtpAudio: Boolean = true,
-    var activityFinishHangup: Boolean = true,
+    var activityFinishHangup: Boolean = false,
     var videoQuality: String = "VIDEO_MODE_DEFAULT"
 )
