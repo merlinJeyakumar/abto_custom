@@ -54,7 +54,7 @@
                 app:layout_constraintTop_toTopOf="@+id/frameLayout">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:visibility="@{viewmodel.ongoingCallLayoutVisibility,default=gone}"
+                    android:visibility="@{viewmodel.cameraSwitch,default=gone}"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:contentDescription="Add Person"
