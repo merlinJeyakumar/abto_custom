@@ -29,6 +29,7 @@ class CallViewModel(
     val abtoHelper: AbtoHelper
 ) : MBaseViewModel(AppController.instance) {
 
+    private var onFrontCamera: Boolean = true
     private var currentScreenId: Int = 0
     private var activeCallId: Int = -1
     private var activeCallState: CallState = CallState.CONNECTING
@@ -104,6 +105,10 @@ class CallViewModel(
     val onCallOptions: LiveData<Int>
         get() = _onCallOptions
 
+    private val _cameraSwitch = MutableLiveData<Int>()
+    val cameraSwitch: LiveData<Int>
+        get() = _cameraSwitch
+
     override fun subscribe() {
         initUi()
     }
@@ -146,7 +151,7 @@ class CallViewModel(
 
         } else if (intentIsIncomingCall) {
             _connectionStatus.postValue(
-                "Incoming ${if (!intentIsVideoCall) "Video" else ""}Call"
+                "Incoming ${if (intentIsVideoCall) "Video" else ""}Call"
             )
             switchScreen(INCOMING_CALL_SCREEN)
         }
@@ -363,9 +368,15 @@ class CallViewModel(
         } else {
             _ongoingCallLayoutVisibility.postValue(View.VISIBLE)
             _incomingCallLayoutVisibility.postValue(View.GONE)
+            _cameraSwitch.postValue(if (isVideoCall) View.VISIBLE else View.GONE)
         }
         _onCallOptions.postValue(View.GONE)
         currentScreenId = screenId
+    }
+
+    fun flipCamera() {
+        abtoHelper.flipCamera(activeCallId, !onFrontCamera)
+        onFrontCamera = !onFrontCamera
     }
 
     fun setVideoCall(svLocalVideo: SurfaceView?, svRemoteView: SurfaceView?) {

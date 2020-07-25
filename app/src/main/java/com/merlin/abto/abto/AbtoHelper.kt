@@ -154,7 +154,7 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
             observable = Observable.interval(3000, 3000, TimeUnit.MILLISECONDS)
                 .subscribeOn(io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     val counters: AbtoPhoneMediaQuality =
                         abtoPhone.readCallMediaQuality(callId, false)
                     val newRxCount = counters.rxPackets
@@ -176,10 +176,12 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
                         }
                         isReconnecting = false
                     }
-                }
+                }, {
+                    it.printStackTrace()
+                })
             RxBus.publish(
                 AbtoRxEvents.CallConnectionChanged(
-                    state = CallState.RECONNECTED,
+                    state = CallState.CONNECTED,
                     callId = callId.toLong(),
                     errorCode = 200,
                     remoteContact = remoteContact
@@ -448,6 +450,10 @@ class AbtoHelper(private var appSettingsRepository: AppSettingsRepository) : IAb
 
     override fun setVideoMute(callId: Int, enable: Boolean) {
         abtoPhone.muteLocalVideo(callId, enable)
+    }
+
+    override fun flipCamera(callId: Int, onFront: Boolean) {
+        abtoPhone.switchCameraToFront(callId,onFront)
     }
 
     override fun startRecording(callId: Int, audioFile: File): Completable {

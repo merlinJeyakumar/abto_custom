@@ -158,10 +158,12 @@ class MainActivity : MActionBarActivity<LayoutMainBinding, MainViewModel>() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent) //FIXME: NOT RECEIVING CORRECT VALUE FROM NOTIFICATION BUILDER
         overridePendingTransition(0, 0)
-        getSipRemoteAddress(intent?.extras?.getString(INCOMING_SIP_IDENTITY)!!).let {
-            viewModel.setSipAddress(
-                it
-            )
+        intent?.extras?.getString(INCOMING_SIP_IDENTITY)?.let {
+            getSipRemoteAddress(it).let {
+                viewModel.setSipAddress(
+                    it
+                )
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ interface IAbtoHandler {
     fun setSpeakerMode(callId: Int, enable: Boolean)
     fun setMicMute(callId: Int, enable: Boolean)
     fun setVideoMute(callId: Int, enable: Boolean)
+    fun flipCamera(callId: Int, onFront: Boolean)
     fun startRecording(callId: Int, audioFile: File): Completable
     fun stopRecording(callId: Int)
     fun restartAbto(): Completable

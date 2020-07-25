@@ -42,21 +42,36 @@
                     android:visibility="gone" />
             </FrameLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:contentDescription="Add Person"
-                android:onClick="@{_->viewmodel.onAddPerson()}"
-                android:padding="@dimen/_5sdp"
-                android:src="@drawable/ic_baseline_person_add_24"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.90"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/frameLayout"
-                app:tint="@android:color/white" />
+                app:layout_constraintTop_toTopOf="@+id/frameLayout">
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:visibility="@{viewmodel.ongoingCallLayoutVisibility,default=gone}"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:contentDescription="Add Person"
+                    android:onClick="@{_->viewmodel.flipCamera()}"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_baseline_flip_camera_android_24"
+                    app:tint="@android:color/white" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:contentDescription="Add Person"
+                    android:onClick="@{_->viewmodel.onAddPerson()}"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_baseline_person_add_24"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayout"
