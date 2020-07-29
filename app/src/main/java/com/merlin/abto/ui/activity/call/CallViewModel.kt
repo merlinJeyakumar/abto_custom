@@ -16,6 +16,8 @@ import com.mithrai.supportmodule.extension.formatTimerMillis
 import com.support.baseApp.mvvm.MBaseViewModel
 import com.support.rxJava.RxBus
 import com.support.rxJava.Scheduler
+import com.support.rxJava.Scheduler.io
+import com.support.rxJava.Scheduler.ui
 import com.support.utills.Log
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -158,20 +160,26 @@ class CallViewModel(
     }
 
     private fun startCall(receiverId: String, isVideoCall: Boolean) {
-        addRxCall(abtoHelper.dialCall(receiverId, isVideoCall).subscribe({
-            activeCallId = it
-        }, {
-            toastMessage.value = "error ${it.localizedMessage}"
-            it.printStackTrace()
-        }))
+        addRxCall(
+            abtoHelper.dialCall(receiverId, isVideoCall)
+                .subscribeOn(io())
+                .observeOn(ui())
+                .subscribe({
+                    activeCallId = it
+                }, {
+                    toastMessage.value = "error ${it.localizedMessage}"
+                    it.printStackTrace()
+                })
+        )
     }
 
     private fun initObserver() {
+        //FIXME: RxBus Creating duplicate calls want to do with alternate
         addRxCall(
             RxBus.listen(AbtoRxEvents.CallConnectionChanged::class.java)
-                .subscribeOn(Scheduler.ui())
+                .subscribeOn(Scheduler.io())
                 .observeOn(Scheduler.ui())
-                .subscribe {
+                .subscribe({
                     activeCallState = it.state
                     when (it.state) {
                         CallState.CONNECTING -> {
@@ -224,10 +232,14 @@ class CallViewModel(
                             Log.e(TAG, "setupObserver ACTIVE ${it.callId}")
                         }
                     }
+                }, {
+                    it.printStackTrace()
                 })
+        )
 
-        addRxCall(RxBus.listen(AbtoRxEvents.OnRemoteAlert::class.java).subscribeOn(Scheduler.ui())
-            .observeOn(Scheduler.ui())
+        addRxCall(RxBus.listen(AbtoRxEvents.OnRemoteAlert::class.java).subscribeOn(ui())
+            .observeOn(Scheduler.io())
+            .observeOn(ui())
             .subscribe {
                 activeCallId = it.callId
                 when (it.alert) {
@@ -269,6 +281,7 @@ class CallViewModel(
     fun doAnswer() {
         addRxCall(
             abtoHelper.answerCall(activeCallId, isVideoCall)
+                .subscribeOn(ui())
                 .subscribe({
                     switchScreen(ON_CALL_SCREEN)
                 }, {
@@ -279,14 +292,18 @@ class CallViewModel(
     }
 
     fun doHangup() {
-        addRxCall(abtoHelper.hangupCall(activeCallId).subscribe({
-            if (appSettingsRepository.getCurrentUserSipModel().activityFinishHangup) {
-                _callConnectDisconnect.postValue(false)
-            }
-        }, {
-            it.printStackTrace()
-            Log.e(TAG, it.localizedMessage)
-        }))
+        addRxCall(
+            abtoHelper.hangupCall(activeCallId)
+                .subscribeOn(ui())
+                .subscribe({
+                    if (appSettingsRepository.getCurrentUserSipModel().activityFinishHangup) {
+                        _callConnectDisconnect.postValue(false)
+                    }
+                }, {
+                    it.printStackTrace()
+                    Log.e(TAG, it.localizedMessage)
+                })
+        )
     }
 
     fun setSpeakerMode() {
